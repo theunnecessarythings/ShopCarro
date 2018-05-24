@@ -11,6 +11,11 @@ import java.io.Serializable;
  * @project merchant
  */
 
+/**
+ *
+ * Composite key for merchant_product table
+ */
+
 @Embeddable
 public class StockId implements Serializable {
 
