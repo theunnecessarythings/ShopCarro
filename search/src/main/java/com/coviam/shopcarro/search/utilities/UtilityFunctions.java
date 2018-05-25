@@ -19,6 +19,7 @@ public class UtilityFunctions {
         productDto.setDescription(product.getDescription());
         productDto.setId(product.getId());
         productDto.setImgUrl(product.getImgUrl());
+        productDto.setMerchantId(product.getMerchantId());
         productDto.setPrice(product.getPrice());
         productDto.setProductName(product.getProductName());
         return productDto;
