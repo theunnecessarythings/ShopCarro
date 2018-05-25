@@ -6,10 +6,10 @@ import com.coviam.shopcarro.authentication.repository.IAuthenticationRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Optional;
+import java.security.MessageDigest;
+
 @Service
 public class AuthenticationServiceImpl implements IAuthenticationService {
 
@@ -40,6 +40,7 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
          *  Checking whether the user is a registered user or not
          *
          * */
+
         String encrypted = new String();
         encrypted = encryptPassword(password+"shopcarro");
         //System.out.println(encrypted);
@@ -71,4 +72,5 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
             return password;
         }
     }
+
 }
