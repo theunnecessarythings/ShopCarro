@@ -7,7 +7,10 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.security.NoSuchAlgorithmException;
 import java.util.Optional;
+import java.security.MessageDigest;
+
 @Service
 public class AuthenticationServiceImpl implements IAuthenticationService {
 
@@ -37,10 +40,8 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
          *  Checking whether the user is a registered user or not
          *
          * */
-
         Optional<UserDetails> userDetails = Optional.ofNullable(iAuthenticationRepository.findByEmailAndPassword(email, password));
         return userDetails.isPresent();
-
-
     }
+
 }

@@ -11,12 +11,22 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import java.security.MessageDigest;
+
 
 /**
- * @author sreerajr
+ * @author Sruthi
  * @package com.coviam.shopcarro.authentication.controller
  * @project authentication
  */
+
+/**
+ *
+ * @author: Sandeep Gupta
+ * Password Encryption
+ *
+ * */
+
 @RestController
 @RequestMapping("userAuthentication")
 public class AuthenticationController {
@@ -42,7 +52,7 @@ public class AuthenticationController {
         System.out.println(loginDetailsDto.getEmail());
         if(loginDetailsDto.getEmail().isEmpty() || loginDetailsDto.getPassword().isEmpty()){
             return new ResponseEntity<> (false,HttpStatus.CREATED);
-        }
+
         boolean create = iAuthenticationService.loginUser(loginDetailsDto.getEmail(),loginDetailsDto.getPassword());
         if(!create){
             return new ResponseEntity<>(create, HttpStatus.CREATED);
@@ -51,6 +61,8 @@ public class AuthenticationController {
         return new ResponseEntity<>(create, HttpStatus.CREATED);
             //return "correct";
         }
+
+
 
 
 
