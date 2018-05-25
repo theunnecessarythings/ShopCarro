@@ -1,21 +1,20 @@
 package com.coviam.shopcarro.addToCart.model;
 
-import com.coviam.shopcarro.addToCart.dto.DetailsDto;
+import com.coviam.shopcarro.addToCart.dto.Details;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
 @Document(collection=CartDetails.COLLECTION_NAME)
 public class CartDetails {
-    public static final String COLLECTION_NAME="cartdetails";
+    public static final String COLLECTION_NAME="cartdetail";
 
     @Id
     private String email;
 
-    private List<DetailsDto> detailsDtos;
+    private List<Details> details;
 
     public CartDetails() {
     }
@@ -24,9 +23,9 @@ public class CartDetails {
         this.email = email;
     }
 
-    public CartDetails(String email, List<DetailsDto> detailsDtos) {
+    public CartDetails(String email, List<Details> details) {
         this.email = email;
-        this.detailsDtos = detailsDtos;
+        this.details = details;
     }
 
     public String getEmail() {
@@ -37,12 +36,12 @@ public class CartDetails {
         this.email = email;
     }
 
-    public List<DetailsDto> getDetailsDtos() {
-        return detailsDtos;
+    public List<Details> getDetails() {
+        return details;
     }
 
-    public void setDetailsDtos(List<DetailsDto> detailsDtos) {
-        this.detailsDtos = detailsDtos;
+    public void setDetails(List<Details> details) {
+        this.details = details;
     }
 
     @Override
@@ -51,20 +50,20 @@ public class CartDetails {
         if (o == null || getClass() != o.getClass()) return false;
         CartDetails that = (CartDetails) o;
         return Objects.equals(email, that.email) &&
-                Objects.equals(detailsDtos, that.detailsDtos);
+                Objects.equals(details, that.details);
     }
 
     @Override
     public int hashCode() {
 
-        return Objects.hash(email, detailsDtos);
+        return Objects.hash(email, details);
     }
 
     @Override
     public String toString() {
         return "CartDetails{" +
                 "email='" + email + '\'' +
-                ", detailsDtos=" + detailsDtos +
+                ", details=" + details +
                 '}';
     }
 }

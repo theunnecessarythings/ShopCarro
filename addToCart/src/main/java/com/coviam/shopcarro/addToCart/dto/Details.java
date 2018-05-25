@@ -3,17 +3,17 @@ package com.coviam.shopcarro.addToCart.dto;
 import javax.validation.constraints.NotNull;
 import java.util.Objects;
 
-public class DetailsDto {
+public class Details {
 
     @NotNull
     private String merchantId;
     @NotNull
     private String id;
 
-    public DetailsDto() {
+    public Details() {
     }
 
-    public DetailsDto(@NotNull String merchantId, @NotNull String id) {
+    public Details(@NotNull String merchantId, @NotNull String id) {
         this.merchantId = merchantId;
         this.id = id;
     }
@@ -38,9 +38,9 @@ public class DetailsDto {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        DetailsDto detailsDto = (DetailsDto) o;
-        return Objects.equals(merchantId, detailsDto.merchantId) &&
-                Objects.equals(id, detailsDto.id);
+        Details details = (Details) o;
+        return Objects.equals(merchantId, details.merchantId) &&
+                Objects.equals(id, details.id);
     }
 
     @Override
@@ -51,7 +51,7 @@ public class DetailsDto {
 
     @Override
     public String toString() {
-        return "DetailsDto{" +
+        return "Details{" +
                 "merchantId='" + merchantId + '\'' +
                 ", id='" + id + '\'' +
                 '}';
