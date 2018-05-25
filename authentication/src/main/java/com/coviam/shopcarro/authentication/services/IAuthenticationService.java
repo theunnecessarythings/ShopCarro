@@ -12,6 +12,5 @@ public interface IAuthenticationService {
 
     public boolean createUser(UserDetailsDto userDetailsDto);
     public boolean loginUser(String email,String password);
-
-
+    public String encryptPassword(String password);
 }
