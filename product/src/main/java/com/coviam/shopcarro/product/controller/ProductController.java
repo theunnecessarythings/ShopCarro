@@ -51,7 +51,6 @@ public class ProductController {
         return productDto;
     }
 
-
     /**
      *  get-products will be returning all the product
      * */
