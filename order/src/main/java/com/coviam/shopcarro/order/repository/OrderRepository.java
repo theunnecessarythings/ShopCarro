@@ -1,9 +1,9 @@
 package com.coviam.shopcarro.order.repository;
 
-import com.coviam.shopcarro.order.details.Details;
+import com.coviam.shopcarro.order.model.Order;
 import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.stereotype.Repository;
 
-import java.util.List;
-
-public interface OrderRepository extends MongoRepository<List<Details>,String> {
+@Repository
+public interface OrderRepository extends MongoRepository<Order,String> {
 }

@@ -54,10 +54,14 @@ public class ProductService implements IProductService {
             ProductDto productDto = new ProductDto(products);
             listDto.add(productDto);
         }
-
         return listDto;
     }
 
+    /**
+     *
+     * Get a particular product with a particular Product Id
+     *
+     * */
     @Override
     public  ProductDto get(String id) throws  NoSuchElementException{
         Optional<Product> product = Optional.of(new Product());
