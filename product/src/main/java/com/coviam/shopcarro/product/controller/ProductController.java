@@ -62,10 +62,20 @@ public class ProductController {
         return new ResponseEntity<>(list,HttpStatus.ACCEPTED);
     }
 
+
+    /**
+     *
+     * Get product will be returning the get product by productId, it will be returning the values
+     *
+     * */
+
     @RequestMapping(value = "/get", method = RequestMethod.GET)
     ResponseEntity<ProductDto> getProduct(@RequestParam String productId) {
         ProductDto product = new ProductDto();
         product = productService.get(productId);
         return new ResponseEntity<>(product,HttpStatus.ACCEPTED);
     }
+
+
+
 }
