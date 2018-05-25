@@ -33,6 +33,7 @@ public class MerchantController {
 
     @RequestMapping(value = "/get-merchant", method = RequestMethod.GET)
     ResponseEntity<MerchantDto> getMerchantById(@RequestParam String merchantId) throws IdNotFoundException {
+        System.out.println("some connection came in get merchant");
         MerchantDto merchantDto = iMerchantService.getMerchantById(merchantId);
         if(null == merchantDto) {
             throw new IdNotFoundException("Merchant not found in the database");
@@ -41,8 +42,9 @@ public class MerchantController {
     }
 
 
-    @RequestMapping(value = "/get-stock-details", method = RequestMethod.GET)
+    @RequestMapping(value = "/get-stock", method = RequestMethod.GET)
     ResponseEntity<StockDetailsDto> getStockDetails(@RequestParam String merchantId, @RequestParam String productId) throws IdNotFoundException {
+        System.out.println("some connection came in get-stock");
         StockDetailsDto stockDetailsDto = iMerchantService.getStockById(new StockId(merchantId, productId));
         if(null == stockDetailsDto) {
             throw new IdNotFoundException("Stock not found in the database");
@@ -50,6 +52,24 @@ public class MerchantController {
         return new ResponseEntity<>(stockDetailsDto, HttpStatus.OK);
     }
 
+
+    /**
+     * This function will never get an invalid productId and merchantId (reason : order of API call)
+     * @param merchantId
+     * @param productId
+     * @return
+     */
+    @RequestMapping(value = "/decrement-stock", method = RequestMethod.GET)
+    ResponseEntity<Boolean> decrementStock(@RequestParam String merchantId, @RequestParam String productId)  {
+        System.out.println("some connection came in decrement-stock");
+        return new ResponseEntity<>(iMerchantService.decrementStock(merchantId, productId), HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/get-available", method = RequestMethod.GET)
+    ResponseEntity<Boolean> checkAvailability(@RequestParam String merchantId, @RequestParam String productId) {
+        System.out.println("some connection came in get-available");
+        return new ResponseEntity<>(iMerchantService.getAvailability(merchantId, productId), HttpStatus.OK);
+    }
 
     /**
      *

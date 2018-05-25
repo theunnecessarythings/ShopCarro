@@ -61,4 +61,21 @@ public class MerchantService implements IMerchantService {
         iStockRepository.save(UtilityFunctions.stockDetailsDtoToStock(stockDetailsDto));
         return true;
     }
+
+    @Override
+    public Boolean decrementStock(String merchantId, String productId) {
+        StockDetailsDto stockDetailsDto = getStockById(new StockId(merchantId, productId));
+        if(stockDetailsDto.getNoOfItems() <= 0) {
+            return false;
+        }
+        stockDetailsDto.setNoOfItems(stockDetailsDto.getNoOfItems() - 1);
+        iStockRepository.save(UtilityFunctions.stockDetailsDtoToStock(stockDetailsDto));
+        return true;
+    }
+
+    @Override
+    public Boolean getAvailability(String merchantId, String productId) {
+        StockDetailsDto stockDetailsDto = getStockById(new StockId(merchantId, productId));
+        return stockDetailsDto.getNoOfItems() > 0;
+    }
 }
