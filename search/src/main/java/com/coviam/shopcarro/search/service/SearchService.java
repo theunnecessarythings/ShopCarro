@@ -18,7 +18,7 @@ import java.util.List;
  */
 
 @Service
-public class SeachService implements ISearchService {
+public class SearchService implements ISearchService {
 
     @Autowired
     private ISearchRepository iSearchRepository;
@@ -37,5 +37,11 @@ public class SeachService implements ISearchService {
             return false;
         iSearchRepository.save(UtilityFunctions.productDtoToProduct(productDto));
         return true;
+    }
+
+    @Override
+    public List<ProductDto> searchGeneric(String query, Pageable pageable) {
+        Page<Product> products = iSearchRepository.findByProductNameContainsOrDescriptionContains(query, query, pageable);
+        return UtilityFunctions.productsToProductDtos(products.getContent());
     }
 }

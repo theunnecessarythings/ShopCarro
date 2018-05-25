@@ -14,4 +14,6 @@ public interface ISearchService {
     List<ProductDto> search(String productName, Pageable pageable);
 
     Boolean addProductToSearchRepository(ProductDto productDto);
+
+    List<ProductDto> searchGeneric(String query, Pageable pageable);
 }

@@ -39,7 +39,34 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+
+        <dependency>
+            <artifactId>solr-solrj</artifactId>
+            <groupId>org.apache.solr</groupId>
+            <version>6.5.0</version>
+        </dependency>
+
+		<dependency>
+			<groupId>org.springframework.data</groupId>
+			<artifactId>spring-data-solr</artifactId>
+			<version>3.0.7.RELEASE</version>
+		</dependency>
 	</dependencies>
+
+
+    <repositories>
+        <repository>
+            <id>spring-libs-release</id>
+            <name>Spring Releases</name>
+            <url>https://repo.spring.io/libs-release</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
+
+
+
 
 	<build>
 		<plugins>
