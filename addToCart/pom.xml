@@ -4,11 +4,11 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>com.coviam.shopcarro</groupId>
-	<artifactId>search</artifactId>
+	<artifactId>addToCart</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
-	<name>search</name>
+	<name>addToCart</name>
 	<description>Demo project for Spring Boot</description>
 
 	<parent>
@@ -27,11 +27,11 @@
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-data-rest</artifactId>
+			<artifactId>spring-boot-starter-data-mongodb</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-data-solr</artifactId>
+			<artifactId>spring-boot-starter-data-rest</artifactId>
 		</dependency>
 
 		<dependency>
@@ -39,34 +39,7 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
-
-        <dependency>
-            <artifactId>solr-solrj</artifactId>
-            <groupId>org.apache.solr</groupId>
-            <version>6.5.0</version>
-        </dependency>
-
-		<dependency>
-			<groupId>org.springframework.data</groupId>
-			<artifactId>spring-data-solr</artifactId>
-			<version>3.0.7.RELEASE</version>
-		</dependency>
 	</dependencies>
-
-
-    <repositories>
-        <repository>
-            <id>spring-libs-release</id>
-            <name>Spring Releases</name>
-            <url>https://repo.spring.io/libs-release</url>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository>
-    </repositories>
-
-
-
 
 	<build>
 		<plugins>

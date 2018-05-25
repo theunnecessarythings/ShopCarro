@@ -2,6 +2,7 @@ package com.coviam.shopcarro.search.model;
 
 import org.apache.solr.client.solrj.beans.Field;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.solr.core.mapping.Indexed;
 import org.springframework.data.solr.core.mapping.SolrDocument;
 
 /**
@@ -9,13 +10,14 @@ import org.springframework.data.solr.core.mapping.SolrDocument;
  * @package com.coviam.shopcarro.search.model
  * @project search
  */
-@SolrDocument(solrCoreName = "product")
+@SolrDocument(solrCoreName = "products")
 public class Product {
     @Id
     @Field
     private String id;
 
     @Field
+    @Indexed
     private String productName;
 
     public Product(String id, String productName, String description, Long price, String merchantId, String imgUrl) {
@@ -36,6 +38,7 @@ public class Product {
     }
 
     @Field
+    @Indexed
     private String description;
 
     @Field
