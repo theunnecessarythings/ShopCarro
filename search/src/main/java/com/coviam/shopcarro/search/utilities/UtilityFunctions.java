@@ -39,7 +39,7 @@ public class UtilityFunctions {
     public static List<ProductDto> productsToProductDtos(List<Product> products) {
         List<ProductDto> productDtos = new ArrayList<>();
         for(Product product : products) {
-            productDtos.add(UtilityFunctions.productToProductDto(product));
+            productDtos.add(productToProductDto(product));
         }
         return productDtos;
     }

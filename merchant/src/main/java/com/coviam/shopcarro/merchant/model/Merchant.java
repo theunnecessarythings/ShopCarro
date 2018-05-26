@@ -1,5 +1,7 @@
 package com.coviam.shopcarro.merchant.model;
 
+import org.springframework.boot.context.properties.ConfigurationProperties;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -35,11 +37,25 @@ public class Merchant {
     @Column(name = "no_of_products_sold")
     private Long noOfProductsSold;
 
-    public Merchant(String merchantId, String merchantName, Long noOfProductsOfferedToSell, Long noOfProductsSold) {
+    @NotNull
+    @Column(name = "merchant_rating")
+    private Double merchantRating;
+
+
+    public Merchant(@NotNull String merchantId, @NotNull String merchantName, @NotNull Long noOfProductsOfferedToSell, @NotNull Long noOfProductsSold, @NotNull Double merchantRating) {
         this.merchantId = merchantId;
         this.merchantName = merchantName;
         this.noOfProductsOfferedToSell = noOfProductsOfferedToSell;
         this.noOfProductsSold = noOfProductsSold;
+        this.merchantRating = merchantRating;
+    }
+
+    public Double getMerchantRating() {
+        return merchantRating;
+    }
+
+    public void setMerchantRating(Double merchantRating) {
+        this.merchantRating = merchantRating;
     }
 
     public Merchant() {
@@ -85,6 +101,7 @@ public class Merchant {
                 ", merchantName='" + merchantName + '\'' +
                 ", noOfProductsOfferedToSell=" + noOfProductsOfferedToSell +
                 ", noOfProductsSold=" + noOfProductsSold +
+                ", merchantRating=" + merchantRating +
                 '}';
     }
 }
