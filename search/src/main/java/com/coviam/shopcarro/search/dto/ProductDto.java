@@ -23,7 +23,6 @@ public class ProductDto {
         this.imgUrl = imgUrl;
     }
 
-
     public ProductDto() {
     }
 
