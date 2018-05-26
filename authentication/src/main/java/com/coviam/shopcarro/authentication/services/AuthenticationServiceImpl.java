@@ -1,23 +1,28 @@
 package com.coviam.shopcarro.authentication.services;
 
+import com.coviam.shopcarro.authentication.CustomException;
 import com.coviam.shopcarro.authentication.dto.UserDetailsDto;
 import com.coviam.shopcarro.authentication.model.UserDetails;
 import com.coviam.shopcarro.authentication.repository.IAuthenticationRepository;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Optional;
 @Service
 public class AuthenticationServiceImpl implements IAuthenticationService {
+    private final Integer maxlength=250;
+    private final Integer namelength=50;
 
     @Autowired
     private IAuthenticationRepository iAuthenticationRepository;
 
     @Override
-    public boolean createUser(UserDetailsDto userDetailsDto) {
+    public boolean createUser(UserDetailsDto userDetailsDto) throws CustomException {
+        validateUser(userDetailsDto);
         UserDetails userDetails = new UserDetails(userDetailsDto.getEmail(), userDetailsDto.getFirstName(), userDetailsDto.getLastName(), userDetailsDto.getPhoneNumber(), userDetailsDto.getAddress(), userDetailsDto.getPassword());
 //        BeanUtils.copyProperties();
         Optional<UserDetails> userDetails1 = iAuthenticationRepository.findById(userDetailsDto.getEmail());
@@ -34,12 +39,16 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
         }
     }
 
+
+
+
     @Override
-    public boolean loginUser(String email, String password)  {
+    public boolean loginUser(String email, String password) throws CustomException {
         /**
          *  Checking whether the user is a registered user or not
          *
          * */
+        validateLoginUser(email,password);
         String encrypted = new String();
         encrypted = encryptPassword(password+"shopcarro");
         //System.out.println(encrypted);
@@ -48,8 +57,9 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
 
     }
 
+
     /**
-     * @author sandeepgupta
+     *
      *
      * For password encryption in we have used java security
      *
@@ -70,5 +80,82 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
             e.printStackTrace();
             return password;
         }
+    }
+
+    @Override
+    public boolean checkAddress(String email) {
+        Optional<UserDetails> userDetails1 = iAuthenticationRepository.findById(email);
+        System.out.println(userDetails1.get().getEmail());
+        if (!userDetails1.isPresent()) {
+            return false;
+
+        }
+        System.out.println(userDetails1.get().getAddress());
+
+        if(userDetails1.get().getAddress()!=null){
+            return true;
+        }
+        return false;
+
+    }
+
+    /**
+     *
+     * Validating according to the constraints
+     *
+     *
+     * @param userDetailsDto
+     * @return
+     * @throws CustomException
+     */
+
+    private boolean validateUser(UserDetailsDto userDetailsDto) throws CustomException {
+        if(userDetailsDto.getEmail()==null || userDetailsDto.getLastName()==null || userDetailsDto.getFirstName()==null || userDetailsDto.getPassword()==null ){
+            throw new  CustomException("false");
+        }
+        if(userDetailsDto.getEmail().length() > maxlength|| userDetailsDto.getFirstName().length()>namelength || userDetailsDto.getLastName().length()>namelength ){
+            throw new CustomException("false");
+        }
+        return true;
+    }
+
+    private boolean validateLoginUser(String email,String password)throws CustomException{
+        if(email==null|| password==null){
+            throw new CustomException("false");
+        }
+        return true;
+    }
+
+    /**
+     *
+     *
+     * Updating the address of the user
+     *
+     *
+     * @param email
+     * @param address
+     * @return
+     * @throws CustomException
+     */
+
+    @Transactional
+    @Modifying
+    public boolean updateAddress(String email, String address) throws CustomException {
+        if (!validateAddress(email, address)) {
+            return false;
+        }
+        if (String.valueOf(iAuthenticationRepository.findById(email)).equals("Optional.empty")) {
+            throw new CustomException("false");
+        } else {
+            iAuthenticationRepository.updateByEmail(email, address);
+            return true;
+        }
+
+    }
+    private boolean validateAddress(String email,String address)throws CustomException{
+        if(email==null|| address==null){
+            throw new CustomException("false");
+        }
+        return true;
     }
 }

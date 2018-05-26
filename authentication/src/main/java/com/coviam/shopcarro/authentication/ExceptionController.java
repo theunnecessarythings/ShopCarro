@@ -12,10 +12,10 @@ public class ExceptionController {
     //private static final Logger LOG = (Logger) LoggerFactory.getLogger(ExceptionController.class);
 
     @Autowired private MessageSource messageSource;
-    @ExceptionHandler(MyCustomException.class)
-    public ResponseEntity<String> myCustomException(MyCustomException ex){
+    @ExceptionHandler(CustomException.class)
+    public ResponseEntity<String> myCustomException(CustomException ex){
         //LOG.warning("Get Comand Exception");
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
     }
 
 

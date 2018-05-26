@@ -3,9 +3,9 @@ package com.coviam.shopcarro.authentication.dto;
 import javax.validation.constraints.NotNull;
 
 public class LoginDetailsDto {
-    @NotNull
+
     private String email;
-    @NotNull
+
     private String password;
 
     public LoginDetailsDto(String email, String password) {
