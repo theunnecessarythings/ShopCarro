@@ -10,15 +10,26 @@ public class StockDetailsDto {
     private String merchantId;
     private Long productPrice;
     private Double rating;
+    private String merchantName;
     private Long noOfItems;
 
 
-    public StockDetailsDto(String productId, String merchantId, Long productPrice, Double rating, Long noOfItems) {
+    public StockDetailsDto(String productId, String merchantId, Long productPrice, Double rating, String merchantName, Long noOfItems) {
         this.productId = productId;
         this.merchantId = merchantId;
         this.productPrice = productPrice;
         this.rating = rating;
+        this.merchantName = merchantName;
         this.noOfItems = noOfItems;
+    }
+
+
+    public String getMerchantName() {
+        return merchantName;
+    }
+
+    public void setMerchantName(String merchantName) {
+        this.merchantName = merchantName;
     }
 
     public StockDetailsDto() {
@@ -64,6 +75,7 @@ public class StockDetailsDto {
         this.noOfItems = noOfItems;
     }
 
+
     @Override
     public String toString() {
         return "StockDetailsDto{" +
@@ -71,6 +83,7 @@ public class StockDetailsDto {
                 ", merchantId='" + merchantId + '\'' +
                 ", productPrice=" + productPrice +
                 ", rating=" + rating +
+                ", merchantName='" + merchantName + '\'' +
                 ", noOfItems=" + noOfItems +
                 '}';
     }

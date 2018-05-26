@@ -1,6 +1,7 @@
 package com.coviam.shopcarro.merchant.controller;
 
 import com.coviam.shopcarro.merchant.dto.MerchantDto;
+import com.coviam.shopcarro.merchant.dto.MerchantProductListDto;
 import com.coviam.shopcarro.merchant.dto.StockDetailsDto;
 import com.coviam.shopcarro.merchant.exceptions.IdAlreadyExistsException;
 import com.coviam.shopcarro.merchant.exceptions.IdNotFoundException;
@@ -10,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * @author sreerajr
@@ -31,8 +34,9 @@ public class MerchantController {
      * @throws IdNotFoundException
      */
 
-    @RequestMapping(value = "/get-merchant", method = RequestMethod.GET)
+    @RequestMapping(value = "/get-merchant-by-id", method = RequestMethod.GET)
     ResponseEntity<MerchantDto> getMerchantById(@RequestParam String merchantId) throws IdNotFoundException {
+        System.out.println("some connection came in get merchant");
         MerchantDto merchantDto = iMerchantService.getMerchantById(merchantId);
         if(null == merchantDto) {
             throw new IdNotFoundException("Merchant not found in the database");
@@ -40,9 +44,16 @@ public class MerchantController {
         return new ResponseEntity<> (merchantDto, HttpStatus.OK);
     }
 
+    @RequestMapping(value = "/get-merchants", method = RequestMethod.GET)
+    ResponseEntity<List<StockDetailsDto> > getMerchants(@RequestBody MerchantProductListDto merchantProductListDto) {
+        List<StockDetailsDto> stockDetailsDtos = iMerchantService.getMerchants(merchantProductListDto);
+        return new ResponseEntity<>(stockDetailsDtos, HttpStatus.OK);
+    }
 
-    @RequestMapping(value = "/get-stock-details", method = RequestMethod.GET)
+
+    @RequestMapping(value = "/get-stock", method = RequestMethod.GET)
     ResponseEntity<StockDetailsDto> getStockDetails(@RequestParam String merchantId, @RequestParam String productId) throws IdNotFoundException {
+        System.out.println("some connection came in get-stock");
         StockDetailsDto stockDetailsDto = iMerchantService.getStockById(new StockId(merchantId, productId));
         if(null == stockDetailsDto) {
             throw new IdNotFoundException("Stock not found in the database");
@@ -50,6 +61,24 @@ public class MerchantController {
         return new ResponseEntity<>(stockDetailsDto, HttpStatus.OK);
     }
 
+
+    /**
+     * This function will never get an invalid productId and merchantId (reason : order of API call)
+     * @param merchantId
+     * @param productId
+     * @return
+     */
+    @RequestMapping(value = "/decrement-stock", method = RequestMethod.GET)
+    ResponseEntity<Boolean> decrementStock(@RequestParam String merchantId, @RequestParam String productId)  {
+        System.out.println("some connection came in decrement-stock");
+        return new ResponseEntity<>(iMerchantService.decrementStock(merchantId, productId), HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/get-available", method = RequestMethod.GET)
+    ResponseEntity<Boolean> checkAvailability(@RequestParam String merchantId, @RequestParam String productId) {
+        System.out.println("some connection came in get-available");
+        return new ResponseEntity<>(iMerchantService.getAvailability(merchantId, productId), HttpStatus.OK);
+    }
 
     /**
      *
@@ -67,6 +96,7 @@ public class MerchantController {
             throw new IdAlreadyExistsException("merchant already exists in the database");
         return new ResponseEntity<> ("merchant created", HttpStatus.CREATED);
     }
+
 
 
     @RequestMapping(value = "/create-stock", method = RequestMethod.POST)

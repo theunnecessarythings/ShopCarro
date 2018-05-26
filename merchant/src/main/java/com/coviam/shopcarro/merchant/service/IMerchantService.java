@@ -1,8 +1,12 @@
 package com.coviam.shopcarro.merchant.service;
 
 import com.coviam.shopcarro.merchant.dto.MerchantDto;
+import com.coviam.shopcarro.merchant.dto.MerchantProductListDto;
 import com.coviam.shopcarro.merchant.dto.StockDetailsDto;
 import com.coviam.shopcarro.merchant.model.key.StockId;
+import com.sun.org.apache.xpath.internal.operations.Bool;
+
+import java.util.List;
 
 /**
  * @author sreerajr
@@ -18,4 +22,10 @@ public interface IMerchantService {
     Boolean createMerchant(MerchantDto merchantDto);
 
     Boolean createStock(StockDetailsDto stockDetailsDto);
+
+    Boolean decrementStock(String merchantId, String productId);
+
+    Boolean getAvailability(String merchantId, String productId);
+
+    List<StockDetailsDto> getMerchants(MerchantProductListDto merchantProductListDto);
 }

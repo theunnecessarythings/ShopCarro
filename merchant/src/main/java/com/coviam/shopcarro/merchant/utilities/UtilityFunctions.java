@@ -6,6 +6,9 @@ import com.coviam.shopcarro.merchant.model.Merchant;
 import com.coviam.shopcarro.merchant.model.Stock;
 import com.coviam.shopcarro.merchant.model.key.StockId;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * @author sreerajr
  * @package com.coviam.shopcarro.merchant.utilities
@@ -26,6 +29,7 @@ public class UtilityFunctions {
         merchant.setNoOfProductsOfferedToSell(merchantDto.getNoOfProductsOfferedToSell());
         merchant.setMerchantId(merchantDto.getMerchantId());
         merchant.setMerchantName(merchantDto.getMerchantName());
+        merchant.setMerchantRating(merchantDto.getMerchantRating());
         return merchant;
     }
 
@@ -36,6 +40,7 @@ public class UtilityFunctions {
         merchantDto.setNoOfProductsOfferedToSell(merchant.getNoOfProductsOfferedToSell());
         merchantDto.setMerchantId(merchant.getMerchantId());
         merchantDto.setMerchantName(merchant.getMerchantName());
+        merchantDto.setMerchantRating(merchant.getMerchantRating());
         return merchantDto;
     }
 
@@ -44,7 +49,8 @@ public class UtilityFunctions {
         stock.setRating(stockDetailsDto.getRating());
         stock.setNoOfItems(stockDetailsDto.getNoOfItems());
         stock.setProductPrice(stockDetailsDto.getProductPrice());
-        stock.setStockId(new StockId(stockDetailsDto.getMerchantId(),stockDetailsDto.getProductId()));
+        stock.setId(new StockId(stockDetailsDto.getMerchantId(),stockDetailsDto.getProductId()));
+        stock.setMerchantName(stockDetailsDto.getMerchantName());
         return stock;
     }
 
@@ -53,9 +59,20 @@ public class UtilityFunctions {
         stockDetailsDto.setRating(stock.getRating());
         stockDetailsDto.setProductPrice(stock.getProductPrice());
         stockDetailsDto.setNoOfItems(stock.getNoOfItems());
-        stockDetailsDto.setProductId(stock.getStockId().getProductId());
-        stockDetailsDto.setMerchantId(stock.getStockId().getMerchantId());
+        stockDetailsDto.setProductId(stock.getId().getProductId());
+        stockDetailsDto.setMerchantId(stock.getId().getMerchantId());
+        stockDetailsDto.setMerchantName(stock.getMerchantName());
         return stockDetailsDto;
     }
+
+    public static List<StockDetailsDto> stockListToDtoList(List<Stock> stocks) {
+        List<StockDetailsDto> stockDetailsDtos = new ArrayList<>();
+        for(Stock stock : stocks) {
+            stockDetailsDtos.add(stockToStockDetailsDto(stock));
+        }
+        return stockDetailsDtos;
+    }
+
+
 
 }

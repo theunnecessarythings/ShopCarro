@@ -16,4 +16,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ISearchRepository extends SolrCrudRepository<Product, String> {
     public Page<Product> findByProductName(String productName, Pageable pageable);
+    public Page<Product> findByProductNameContainsOrDescriptionContains(String productName, String description, Pageable pageable);
+
+    //Add Sort Options Also Later
 }
