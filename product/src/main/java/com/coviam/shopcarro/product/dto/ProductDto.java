@@ -2,6 +2,7 @@ package com.coviam.shopcarro.product.dto;
 
 import com.coviam.shopcarro.product.model.Product;
 
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -13,45 +14,31 @@ import java.util.Objects;
 public class ProductDto {
 
     /**
-    *
-     *  Product details in the
-    * */
+     *  Product details
+     * */
     private String id;
-    private String usp;
+    private String productName;
     private String description;
     private String attribute;
     private Long price;
-    private String merchantId;
+    private List<String> merchantId;
     private String imgUrl;
 
     public ProductDto() {
 
     }
 
-
-    public ProductDto(Product product){
-        this.id = product.getId();
-        this.usp = product.getUsp();
-        this.description = product.getDescription();
-        this.attribute = product.getAttribute();
-        this.price = product.getPrice();
-        this.merchantId = product.getMerchantId();
-        this.imgUrl = product.getImgUrl();
-    }
-
-    public String getUsp() {
-        return usp;
-    }
-
-    public ProductDto(String id, String usp, String description, String attribute, Long price, String merchantId, String imgUrl) {
+    public ProductDto(String id, String productName, String description, String attribute, Long price, List<String> merchantId, String imgUrl) {
         this.id = id;
-        this.usp = usp;
+        this.productName = productName;
         this.description = description;
         this.attribute = attribute;
         this.price = price;
         this.merchantId = merchantId;
         this.imgUrl = imgUrl;
     }
+
+
 
     public String getId() {
         return id;
@@ -61,8 +48,12 @@ public class ProductDto {
         this.id = id;
     }
 
-    public void setUsp(String usp) {
-        this.usp = usp;
+    public String getProductName() {
+        return productName;
+    }
+
+    public void setProductName(String productName) {
+        this.productName = productName;
     }
 
     public String getDescription() {
@@ -89,11 +80,11 @@ public class ProductDto {
         this.price = price;
     }
 
-    public String getMerchantId() {
+    public List<String> getMerchantId() {
         return merchantId;
     }
 
-    public void setMerchantId(String merchantId) {
+    public void setMerchantId(List<String> merchantId) {
         this.merchantId = merchantId;
     }
 
@@ -111,7 +102,7 @@ public class ProductDto {
         if (o == null || getClass() != o.getClass()) return false;
         ProductDto that = (ProductDto) o;
         return Objects.equals(id, that.id) &&
-                Objects.equals(usp, that.usp) &&
+                Objects.equals(productName, that.productName) &&
                 Objects.equals(description, that.description) &&
                 Objects.equals(attribute, that.attribute) &&
                 Objects.equals(price, that.price) &&
@@ -122,18 +113,18 @@ public class ProductDto {
     @Override
     public int hashCode() {
 
-        return Objects.hash(id, usp, description, attribute, price, merchantId, imgUrl);
+        return Objects.hash(id, productName, description, attribute, price, merchantId, imgUrl);
     }
 
     @Override
     public String toString() {
         return "ProductDto{" +
                 "id='" + id + '\'' +
-                ", usp='" + usp + '\'' +
+                ", productName='" + productName + '\'' +
                 ", description='" + description + '\'' +
                 ", attribute='" + attribute + '\'' +
                 ", price=" + price +
-                ", merchantId='" + merchantId + '\'' +
+                ", merchantId=" + merchantId +
                 ", imgUrl='" + imgUrl + '\'' +
                 '}';
     }
