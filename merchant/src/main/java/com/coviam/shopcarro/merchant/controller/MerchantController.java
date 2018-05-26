@@ -1,6 +1,7 @@
 package com.coviam.shopcarro.merchant.controller;
 
 import com.coviam.shopcarro.merchant.dto.MerchantDto;
+import com.coviam.shopcarro.merchant.dto.MerchantProductListDto;
 import com.coviam.shopcarro.merchant.dto.StockDetailsDto;
 import com.coviam.shopcarro.merchant.exceptions.IdAlreadyExistsException;
 import com.coviam.shopcarro.merchant.exceptions.IdNotFoundException;
@@ -10,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * @author sreerajr
@@ -31,7 +34,7 @@ public class MerchantController {
      * @throws IdNotFoundException
      */
 
-    @RequestMapping(value = "/get-merchant", method = RequestMethod.GET)
+    @RequestMapping(value = "/get-merchant-by-id", method = RequestMethod.GET)
     ResponseEntity<MerchantDto> getMerchantById(@RequestParam String merchantId) throws IdNotFoundException {
         System.out.println("some connection came in get merchant");
         MerchantDto merchantDto = iMerchantService.getMerchantById(merchantId);
@@ -39,6 +42,12 @@ public class MerchantController {
             throw new IdNotFoundException("Merchant not found in the database");
         }
         return new ResponseEntity<> (merchantDto, HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/get-merchants", method = RequestMethod.GET)
+    ResponseEntity<List<StockDetailsDto> > getMerchants(@RequestBody MerchantProductListDto merchantProductListDto) {
+        List<StockDetailsDto> stockDetailsDtos = iMerchantService.getMerchants(merchantProductListDto);
+        return new ResponseEntity<>(stockDetailsDtos, HttpStatus.OK);
     }
 
 
@@ -87,6 +96,7 @@ public class MerchantController {
             throw new IdAlreadyExistsException("merchant already exists in the database");
         return new ResponseEntity<> ("merchant created", HttpStatus.CREATED);
     }
+
 
 
     @RequestMapping(value = "/create-stock", method = RequestMethod.POST)

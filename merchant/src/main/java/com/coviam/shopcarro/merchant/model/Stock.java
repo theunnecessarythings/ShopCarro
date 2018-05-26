@@ -16,50 +16,65 @@ import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "stock_details")
-public class Stock {
+public class Stock implements Comparable{
 
     @NotNull
     @EmbeddedId
-    private StockId stockId;
+    private StockId id; // merchantId and productId
 
     @NotNull
     @Column(name = "product_price")
     private Long productPrice;
 
     @NotNull
-    private Double rating;
+    private Double rating; //rating is 0
 
     @NotNull
     @Column(name = "no_of_items")
     private Long noOfItems;
 
+    @Column(name = "merchant_name")
+    private String merchantName;
 
-    public Stock(StockId stockId, Long productPrice, Double rating, Long noOfItems) {
-        this.stockId = stockId;
+
+
+    public Stock(@NotNull StockId id, @NotNull Long productPrice, @NotNull Double rating, @NotNull Long noOfItems, String merchantName) {
+        this.id = id;
         this.productPrice = productPrice;
         this.rating = rating;
         this.noOfItems = noOfItems;
+        this.merchantName = merchantName;
+    }
+
+    public String getMerchantName() {
+        return merchantName;
+    }
+
+    public void setMerchantName(String merchantName) {
+        this.merchantName = merchantName;
     }
 
     public Stock() {
     }
 
+
     @Override
     public String toString() {
         return "Stock{" +
-                "stockId=" + stockId +
+                "id=" + id +
                 ", productPrice=" + productPrice +
                 ", rating=" + rating +
                 ", noOfItems=" + noOfItems +
+                ", merchantName='" + merchantName + '\'' +
                 '}';
     }
 
-    public StockId getStockId() {
-        return stockId;
+    public StockId getId() {
+        return id;
     }
 
-    public void setStockId(StockId stockId) {
-        this.stockId = stockId;
+    public void setId(StockId id) {
+        this.id = id;
     }
 
     public Long getProductPrice() {
@@ -85,4 +100,12 @@ public class Stock {
     public void setNoOfItems(Long noOfItems) {
         this.noOfItems = noOfItems;
     }
+
+    @Override
+    public int compareTo(Object o) {
+        Double compareRating=((Stock)o).getRating();
+        return (int) Math.ceil(compareRating - this.rating);
+    }
+
+
 }

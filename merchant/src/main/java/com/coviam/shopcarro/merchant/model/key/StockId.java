@@ -20,7 +20,7 @@ import java.io.Serializable;
 public class StockId implements Serializable {
 
     @NotNull
-    @Column(name = "merchant_id")
+    //@Column(name = "merchant_id")
     private String merchantId;
 
     @NotNull
