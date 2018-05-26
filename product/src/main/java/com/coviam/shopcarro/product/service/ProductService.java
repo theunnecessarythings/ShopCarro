@@ -51,17 +51,22 @@ public class ProductService implements IProductService {
         List<ProductDto> listDto = new ArrayList<>();
 
         for(Product products:list){
-            ProductDto productDto = new ProductDto(products);
+            ProductDto productDto = new ProductDto();
+
+            productDto.setAttribute(products.getAttribute());
+            productDto.setPrice(products.getPrice());
+            productDto.setImgUrl(products.getImgUrl());
+            productDto.setDescription(products.getDescription());
+            productDto.setId(products.getId());
+            productDto.setMerchantId(products.getMerchantId());
+            productDto.setProductName(products.getProductName());
+
             listDto.add(productDto);
         }
+
         return listDto;
     }
 
-    /**
-     *
-     * Get a particular product with a particular Product Id
-     *
-     * */
     @Override
     public  ProductDto get(String id) throws  NoSuchElementException{
         Optional<Product> product = Optional.of(new Product());
@@ -80,11 +85,20 @@ public class ProductService implements IProductService {
         productDto.setId(product.get().getId());
         productDto.setAttribute(product.get().getAttribute());
         productDto.setDescription(product.get().getDescription());
-        productDto.setUsp(product.get().getUsp());
+        productDto.setProductName(product.get().getProductName());
         productDto.setMerchantId(product.get().getMerchantId());
         productDto.setImgUrl(product.get().getImgUrl());
         productDto.setPrice(product.get().getPrice());
 
         return productDto;
+    }
+
+    public String getProductNameById(String id){
+        if(!iProductRepository.existsById(id)){
+            return null;
+        }
+        Optional<Product> product = Optional.of(new Product());
+        product = iProductRepository.findById(id);
+        return product.get().getProductName();
     }
 }

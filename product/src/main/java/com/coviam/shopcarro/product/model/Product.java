@@ -3,10 +3,11 @@ package com.coviam.shopcarro.product.model;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.util.List;
 import java.util.Objects;
 
 /**
- * @author sandeepgupta007
+ * @author sandeepgupta
  * @package com.coviam.shopcarro.product.model
  * @project product
  */
@@ -16,31 +17,30 @@ import java.util.Objects;
 public class Product {
     public static final String COLLECTION_NAME="product";
 
+    /**
+     *
+     * */
+
     @Id
     private String id;
-    private String usp;
+    private String productName;
     private String description;
     private String attribute;
     private Long price;
-    private String merchantId;
+    private List<String> merchantId;
     private String imgUrl;
 
     public Product() {
     }
 
-    public Product(String id, String usp, String description, String attribute, Long price, String merchantId, String imgUrl) {
+    public Product(String id, String productName, String description, String attribute, Long price, List<String> merchantId, String imgUrl) {
         this.id = id;
-        this.usp = usp;
+        this.productName = productName;
         this.description = description;
         this.attribute = attribute;
         this.price = price;
         this.merchantId = merchantId;
         this.imgUrl = imgUrl;
-    }
-
-
-    public static String getCollectionName() {
-        return COLLECTION_NAME;
     }
 
     public String getId() {
@@ -51,12 +51,12 @@ public class Product {
         this.id = id;
     }
 
-    public String getUsp() {
-        return usp;
+    public String getProductName() {
+        return productName;
     }
 
-    public void setUsp(String usp) {
-        this.usp = usp;
+    public void setProductName(String productName) {
+        this.productName = productName;
     }
 
     public String getDescription() {
@@ -83,11 +83,11 @@ public class Product {
         this.price = price;
     }
 
-    public String getMerchantId() {
+    public List<String> getMerchantId() {
         return merchantId;
     }
 
-    public void setMerchantId(String merchantId) {
+    public void setMerchantId(List<String> merchantId) {
         this.merchantId = merchantId;
     }
 
@@ -99,14 +99,13 @@ public class Product {
         this.imgUrl = imgUrl;
     }
 
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Product product = (Product) o;
         return Objects.equals(id, product.id) &&
-                Objects.equals(usp, product.usp) &&
+                Objects.equals(productName, product.productName) &&
                 Objects.equals(description, product.description) &&
                 Objects.equals(attribute, product.attribute) &&
                 Objects.equals(price, product.price) &&
@@ -117,18 +116,18 @@ public class Product {
     @Override
     public int hashCode() {
 
-        return Objects.hash(id, usp, description, attribute, price, merchantId, imgUrl);
+        return Objects.hash(id, productName, description, attribute, price, merchantId, imgUrl);
     }
 
     @Override
     public String toString() {
         return "Product{" +
                 "id='" + id + '\'' +
-                ", usp='" + usp + '\'' +
+                ", productName='" + productName + '\'' +
                 ", description='" + description + '\'' +
                 ", attribute='" + attribute + '\'' +
                 ", price=" + price +
-                ", merchantId='" + merchantId + '\'' +
+                ", merchantId=" + merchantId +
                 ", imgUrl='" + imgUrl + '\'' +
                 '}';
     }

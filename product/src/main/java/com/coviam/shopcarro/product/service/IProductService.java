@@ -15,5 +15,5 @@ public interface IProductService {
     public ProductDto create(ProductDto productDto);
     public List<ProductDto> getAllProducts();
     public  ProductDto get(String id);
-
+    public String getProductNameById(String id);
 }

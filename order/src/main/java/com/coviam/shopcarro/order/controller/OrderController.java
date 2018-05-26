@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -61,9 +62,10 @@ public class OrderController {
      *
      * */
     @RequestMapping(value = "/history",method = RequestMethod.GET)
-    ResponseEntity<OrderDto> history(@RequestParam String email){
+    ResponseEntity<OrderDto> history(@RequestParam String email) throws ParseException {
         OrderDto orderDto = new OrderDto();
         orderDto = iOrderservices.getHistory(email);
         return new ResponseEntity<>(orderDto,HttpStatus.ACCEPTED);
     }
+
 }
