@@ -56,6 +56,15 @@ public class AddToCartController {
 
 
 
+    @RequestMapping(value = "/del-item",method = RequestMethod.GET)
+    ResponseEntity<Boolean> delete(@RequestParam String email,@RequestParam String merchantId,@RequestParam String id ){
+
+        iAddToCartService.delItem(email,merchantId,id);
+        return new ResponseEntity<>(true, HttpStatus.CREATED);
+    }
+
+
+
 
 
 

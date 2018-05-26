@@ -11,11 +11,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-/**
- *
- * @author: sandeepgupta
- *
- * */
 
 @Service
 public class AddToCartImpl implements IAddToCartService {
@@ -31,8 +26,7 @@ public class AddToCartImpl implements IAddToCartService {
 
     @Override
     public void addToCart(String email, String merchantId, String Id) {
-           // CartDetails cartDetails1 = new CartDetails(email);
-        System.out.println(Id);
+
 
         /**
          *
@@ -57,12 +51,31 @@ public class AddToCartImpl implements IAddToCartService {
         }
     }
 
+    @Override
+    public boolean delItem(String email, String merchantId, String id) {
+        if(!iAddToCartRepository.existsById(email)){
+            return false;
+        }
+        Optional<CartDetails> cartDetailsOpt = iAddToCartRepository.findById(email);
+        Details details = new Details(merchantId, id);
+        CartDetails cartDetails = cartDetailsOpt.get();
+        List<Details> list = new ArrayList<>();
+        list = cartDetails.getDetails();
+        list.remove(details);
+        CartDetails cart = new CartDetails(email, list);
+        iAddToCartRepository.save(cart);
+        return true;
+
+    }
+
+
+
 
     /**
      *
      * This will be returning the details if the key exists in the DB otherwise returning null.
      *
-     * */
+     **/
 
     @Override
     public CartDetailsDto getCart(String email) {

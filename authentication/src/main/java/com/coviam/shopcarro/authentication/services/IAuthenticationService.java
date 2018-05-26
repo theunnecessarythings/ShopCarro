@@ -1,7 +1,7 @@
 package com.coviam.shopcarro.authentication.services;
 
+import com.coviam.shopcarro.authentication.CustomException;
 import com.coviam.shopcarro.authentication.dto.UserDetailsDto;
-import com.coviam.shopcarro.authentication.model.UserDetails;
 
 /**
  * @author sreerajr
@@ -10,7 +10,10 @@ import com.coviam.shopcarro.authentication.model.UserDetails;
  */
 public interface IAuthenticationService {
 
-    public boolean createUser(UserDetailsDto userDetailsDto);
-    public boolean loginUser(String email,String password);
+    public boolean createUser(UserDetailsDto userDetailsDto) throws CustomException;
+    public boolean loginUser(String email,String password) throws CustomException;
     public String encryptPassword(String password);
+
+     public  boolean checkAddress(String email);
+    public boolean updateAddress(String email, String address) throws CustomException;
 }
