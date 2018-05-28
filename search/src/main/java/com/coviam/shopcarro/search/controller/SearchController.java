@@ -23,10 +23,30 @@ public class SearchController {
     @Autowired
     private ISearchService iSearchService;
 
-
-    @RequestMapping(value = "/search")
+    //Don't do this, this doesn't make much sense now
+    @RequestMapping(value = "/search-specific")
     public ResponseEntity<List<ProductDto> > search(@RequestParam(value = "q") String productName, Pageable pageable) throws NoItemsMatchingDescriptionException {
         List<ProductDto> productDtos = iSearchService.search(productName, pageable);
+        if(null == productDtos) {
+            //This never happens actually ... great
+            throw new NoItemsMatchingDescriptionException("Empty Search Results");
+        }
+        return new ResponseEntity<>(productDtos, HttpStatus.OK);
+    }
+
+    /**
+     * Search will return if the query is contained in either product name or description
+     * Make the change such that first it will search by name then it will search by description so as to maintain
+     * the preference
+     * @param query
+     * @param pageable
+     * @return
+     * @throws NoItemsMatchingDescriptionException
+     */
+    @RequestMapping(value = "/search")
+    public ResponseEntity<List<ProductDto> > searchGeneric(@RequestParam(value = "q") String query, Pageable pageable) throws NoItemsMatchingDescriptionException {
+        System.out.println("Some thing came with " + query);
+        List<ProductDto> productDtos = iSearchService.searchGeneric(query, pageable);
         if(null == productDtos) {
             //This never happens actually ... great
             throw new NoItemsMatchingDescriptionException("Empty Search Results");
