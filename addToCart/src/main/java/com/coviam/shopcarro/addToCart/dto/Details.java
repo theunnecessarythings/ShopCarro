@@ -13,7 +13,7 @@ public class Details {
     public Details() {
     }
 
-    public Details(@NotNull String merchantId, @NotNull String id) {
+    public Details( String merchantId, String id) {
         this.merchantId = merchantId;
         this.id = id;
     }

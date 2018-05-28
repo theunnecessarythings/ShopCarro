@@ -14,10 +14,7 @@ import javax.transaction.Transactional;
  * @project authentication
  */
 public interface IAuthenticationRepository extends CrudRepository<UserDetails,String> {
-/*
-    @Query("Select * from UserDetails where email=:email and password=:password")
-    public UserDetails findByIdAndDetails(@Param("email") String email,@Param("password") String password);
-    */
+
     UserDetails findByEmailAndPassword(String email, String password);
 
     @Transactional

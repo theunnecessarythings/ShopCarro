@@ -33,6 +33,7 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
         if (userDetails1.isPresent()) {
             return false;
         } else {
+            System.out.println(userDetailsDto.getPassword());
             userDetails.setPassword(encryptPassword(userDetailsDto.getPassword()+"shopcarro"));
             iAuthenticationRepository.save(userDetails);
             return true;

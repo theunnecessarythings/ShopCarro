@@ -1,5 +1,6 @@
 package com.coviam.shopcarro.addToCart.controller;
 
+import com.coviam.shopcarro.addToCart.CustomException;
 import com.coviam.shopcarro.addToCart.dto.CartDetailsDto;
 import com.coviam.shopcarro.addToCart.services.IAddToCartService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,15 +30,25 @@ public class AddToCartController {
      * */
 
     @RequestMapping(value = "/add-cart", method = RequestMethod.GET)
-    ResponseEntity<Boolean> addCart(@RequestParam String email,String merchantId,String id) {
-        iAddToCartService.addToCart(email,merchantId,id);
-        return new ResponseEntity<>(true, HttpStatus.CREATED);
+    ResponseEntity<Boolean> addCart(@RequestParam String email,String merchantId,String id) throws CustomException {
+        System.out.println(email + merchantId + id);
+        if (email == null || merchantId==null||id==null )
+        {
+            //System.out.println("hey");
+            throw new CustomException("false");
+        } else {
+
+           // System.out.println("hey");
+            boolean create = iAddToCartService.addToCart(email, merchantId, id);
+            System.out.println(create);
+            return new ResponseEntity<>(create, HttpStatus.CREATED);
+        }
     }
 
 
     /**
      *
-     * localhost:8080/get-cart
+     * localhost:8081/get-cart
      *
      * This function will be returing the cartDetailsDto which is called by the ORDER module to get all the products
      * for the particular user.
@@ -47,21 +58,35 @@ public class AddToCartController {
      *
      * */
 
+
     @RequestMapping(value = "/get-cart", method = RequestMethod.GET)
-    ResponseEntity<CartDetailsDto> get(@RequestParam String email) {
+    ResponseEntity<CartDetailsDto> get(@RequestParam String email) throws CustomException {
         System.out.println(email);
+        if (email == null ) {
+            throw new CustomException("false");
+        }
+
         CartDetailsDto cartDetailsDto = iAddToCartService.getCart(email);
         return new ResponseEntity<>(cartDetailsDto, HttpStatus.CREATED);
     }
 
+    /**
+     * This function
+     *
+     */
+
 
 
     @RequestMapping(value = "/del-item",method = RequestMethod.GET)
-    ResponseEntity<Boolean> delete(@RequestParam String email,@RequestParam String merchantId,@RequestParam String id ){
-
+    ResponseEntity<Boolean> delete(@RequestParam String email,@RequestParam String merchantId,@RequestParam String id ) throws CustomException {
+       if (email == null || merchantId==null||id==null )
+        {
+            throw new CustomException("false");
+        }
         iAddToCartService.delItem(email,merchantId,id);
         return new ResponseEntity<>(true, HttpStatus.CREATED);
     }
+
 
 
 
