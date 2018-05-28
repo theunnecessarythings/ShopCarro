@@ -8,10 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * @author sandeepgupta
@@ -23,11 +20,12 @@ import java.util.List;
 public class ProductController {
 
     /**
+     * @params: for create-product, if is
      *     private String productName;
      *     private String description;
      *     private String attribute;
      *     private Long price;
-     *     private String merchantId;
+     *     private List<String> merchantId;
      *     private String imgUrl;
      *
      * */
@@ -43,7 +41,7 @@ public class ProductController {
      * */
     @RequestMapping(value= "/create-product",method = RequestMethod.POST)
     public ProductDto addProduct(@RequestBody ProductDto productDto){
-        System.out.println("Hello - "+ productDto.getProductName());
+        System.out.println("Create-Product  - "+ productDto.getProductName());
         ProductDto productDtoCopy = new ProductDto();
         productDtoCopy = productService.create(new ProductDto(productDto.getId(),productDto.getProductName(),productDto.getDescription(),productDto.getAttribute(),productDto.getPrice(),productDto.getMerchantId(),productDto.getImgUrl()));
         return productDtoCopy;
@@ -54,18 +52,20 @@ public class ProductController {
      *  get-products will be returning all the product
      * */
     @RequestMapping(value = "/get-products", method = RequestMethod.GET)
-    ResponseEntity<List<ProductDto>> getProductList() {
+    ResponseEntity<List<ProductDto>> getProductList() throws NoSuchElementException{
+        System.out.println("g");
         List<ProductDto> list = new ArrayList<>();
         list = productService.getAllProducts();
-        System.out.println("Controller " + list.size());
+        // System.out.println("Controller " + list.size());
         return new ResponseEntity<>(list,HttpStatus.ACCEPTED);
     }
 
     /**
      *  get the product the details with product Id
      * */
-    @RequestMapping(value = "/get", method = RequestMethod.GET)
+    @RequestMapping(value = "/get-product-by-id", method = RequestMethod.GET)
     ResponseEntity<ProductDto> getProduct(@RequestParam String productId) {
+        System.out.println("inside - (get-product-by-id) ");
         ProductDto product = new ProductDto();
         product = productService.get(productId);
         return new ResponseEntity<>(product,HttpStatus.ACCEPTED);
@@ -73,7 +73,8 @@ public class ProductController {
 
     @RequestMapping(value = "/get-product-name",method = RequestMethod.GET)
     ResponseEntity < String > getProductName(@RequestParam String productId){
+        System.out.println("Inside get Product Name");
         String productName = productService.getProductNameById(productId);
-        return  new ResponseEntity<>(productName,HttpStatus.ACCEPTED);
+        return new ResponseEntity<>(productName,HttpStatus.ACCEPTED);
     }
 }
