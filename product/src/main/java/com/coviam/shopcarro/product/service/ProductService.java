@@ -38,7 +38,7 @@ public class ProductService implements IProductService {
 
     /**
      *
-     * getAllProducts() will be returning the list of all product available in database.
+     *  getAllProducts() will be returning the list of all product available in database.
      *
      *  later we can pass the userCharacteristics to this functions to filter out the products details for particular users to display
      *
@@ -93,9 +93,9 @@ public class ProductService implements IProductService {
         return productDto;
     }
 
-    public String getProductNameById(String id){
+    public String getProductNameById(String id) throws NoSuchElementException{
         if(!iProductRepository.existsById(id)){
-            return null;
+            throw new NoSuchElementException("Product Name not found");
         }
         Optional<Product> product = Optional.of(new Product());
         product = iProductRepository.findById(id);

@@ -1,7 +1,5 @@
-package com.coviam.shopcarro.product.CustomException;
+package com.coviam.shopcarro.product.ExceptionHandling;
 
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -10,7 +8,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import java.util.NoSuchElementException;
 
 @RestControllerAdvice
-public class CustomException extends Throwable{
+public class ExceptionController extends Throwable{
 
         @ExceptionHandler(NoSuchElementException.class)
         public ResponseEntity<String> noSuchElementException(NoSuchElementException ex){

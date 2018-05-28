@@ -18,7 +18,7 @@ public class Product {
     public static final String COLLECTION_NAME="product";
 
     /**
-     *
+     *  id here is referred as the productId, which is used as the key for the mongoDB
      * */
 
     @Id
