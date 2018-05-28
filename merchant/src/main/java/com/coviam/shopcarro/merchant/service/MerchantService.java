@@ -76,7 +76,7 @@ public class MerchantService implements IMerchantService {
     @Override
     public Boolean decrementStock(String merchantId, String productId) {
         StockDetailsDto stockDetailsDto = getStockById(new StockId(merchantId, productId));
-        if(stockDetailsDto.getNoOfItems() <= 0) {
+        if(null == stockDetailsDto || stockDetailsDto.getNoOfItems() <= 0) {
             return false;
         }
         MerchantDto merchantDto = getMerchantById(merchantId);
@@ -94,6 +94,8 @@ public class MerchantService implements IMerchantService {
     @Override
     public Boolean getAvailability(String merchantId, String productId) {
         StockDetailsDto stockDetailsDto = getStockById(new StockId(merchantId, productId));
+        if(null == stockDetailsDto)
+            return false;
         return stockDetailsDto.getNoOfItems() > 0;
     }
 
@@ -114,6 +116,7 @@ public class MerchantService implements IMerchantService {
             Merchant merchant = iMerchantRepository.findById(stock.getId().getMerchantId()).get();
             Double rating = merchant.getMerchantRating();
             Long offered = iStockRepository.countByIdMerchantId(merchant.getMerchantId());
+
             Long sold = merchant.getNoOfProductsSold();
             Long items = stock.getNoOfItems();   //current stock
             //Price of the product by various merchant -> should be affecting inversely

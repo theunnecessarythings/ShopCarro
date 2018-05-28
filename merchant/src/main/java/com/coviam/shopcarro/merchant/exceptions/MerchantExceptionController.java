@@ -33,4 +33,12 @@ public class MerchantExceptionController {
         LOG.warn("Id Already Exists Exception", ex);
         return ResponseEntity.status(HttpStatus.OK).body(ex.getMessage());
     }
+
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<String> illegalArgumentException(IllegalArgumentException ex) {
+        LOG.warn("Wrong parameters sent", ex);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+    }
+
 }

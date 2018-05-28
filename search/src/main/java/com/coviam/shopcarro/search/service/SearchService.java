@@ -9,6 +9,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -41,7 +42,8 @@ public class SearchService implements ISearchService {
 
     @Override
     public List<ProductDto> searchGeneric(String query, Pageable pageable) {
-        Page<Product> products = iSearchRepository.findByProductNameContainsOrDescriptionContains(query, query, pageable);
+        List<String> strings = Arrays.asList(query.split(" "));
+        Page<Product> products = iSearchRepository.findByProductNameContainsOrDescriptionContains(strings, strings, pageable);
         return UtilityFunctions.productsToProductDtos(products.getContent());
     }
 }

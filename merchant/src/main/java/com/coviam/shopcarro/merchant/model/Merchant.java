@@ -29,7 +29,7 @@ public class Merchant {
     @Column(name = "merchant_name")
     private String merchantName;
 
-    @NotNull
+
     @Column(name = "no_of_products_offered")
     private Long noOfProductsOfferedToSell;
 
@@ -42,7 +42,7 @@ public class Merchant {
     private Double merchantRating;
 
 
-    public Merchant(@NotNull String merchantId, @NotNull String merchantName, @NotNull Long noOfProductsOfferedToSell, @NotNull Long noOfProductsSold, @NotNull Double merchantRating) {
+    public Merchant(@NotNull String merchantId, @NotNull String merchantName, Long noOfProductsOfferedToSell, @NotNull Long noOfProductsSold, @NotNull Double merchantRating) {
         this.merchantId = merchantId;
         this.merchantName = merchantName;
         this.noOfProductsOfferedToSell = noOfProductsOfferedToSell;

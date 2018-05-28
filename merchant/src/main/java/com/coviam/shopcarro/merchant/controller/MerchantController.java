@@ -8,6 +8,7 @@ import com.coviam.shopcarro.merchant.exceptions.IdNotFoundException;
 import com.coviam.shopcarro.merchant.model.key.StockId;
 import com.coviam.shopcarro.merchant.service.IMerchantService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,6 +23,7 @@ import java.util.List;
 
 @RestController
 public class MerchantController {
+
 
     @Autowired
     private IMerchantService iMerchantService;
@@ -44,8 +46,9 @@ public class MerchantController {
         return new ResponseEntity<> (merchantDto, HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/get-merchants", method = RequestMethod.GET)
+    @RequestMapping(value = "/get-merchants", method = RequestMethod.POST)
     ResponseEntity<List<StockDetailsDto> > getMerchants(@RequestBody MerchantProductListDto merchantProductListDto) {
+        System.out.println(merchantProductListDto);
         List<StockDetailsDto> stockDetailsDtos = iMerchantService.getMerchants(merchantProductListDto);
         return new ResponseEntity<>(stockDetailsDtos, HttpStatus.OK);
     }
