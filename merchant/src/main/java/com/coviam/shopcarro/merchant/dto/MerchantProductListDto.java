@@ -26,4 +26,12 @@ public class MerchantProductListDto {
     public void setStockIds(List<StockId> stockIds) {
         this.stockIds = stockIds;
     }
+
+
+    @Override
+    public String toString() {
+        return "MerchantProductListDto{" +
+                "stockIds=" + stockIds +
+                '}';
+    }
 }
