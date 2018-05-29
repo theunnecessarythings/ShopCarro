@@ -74,7 +74,7 @@ public class MerchantService implements IMerchantService {
     }
 
     @Override
-    public Boolean decrementStock(String merchantId, String productId) {
+    public Boolean decrementStock(String merchantId, String productId, Long quantity) {
         StockDetailsDto stockDetailsDto = getStockById(new StockId(merchantId, productId));
         if(null == stockDetailsDto || stockDetailsDto.getNoOfItems() <= 0) {
             return false;
@@ -84,19 +84,19 @@ public class MerchantService implements IMerchantService {
         /**
          * Add stock solds count and decrement stock in stock repository
          */
-        merchantDto.setNoOfProductsSold(merchantDto.getNoOfProductsSold() + 1);
-        stockDetailsDto.setNoOfItems(stockDetailsDto.getNoOfItems() - 1);
+        merchantDto.setNoOfProductsSold(merchantDto.getNoOfProductsSold() + quantity);
+        stockDetailsDto.setNoOfItems(stockDetailsDto.getNoOfItems() - quantity);
         iMerchantRepository.save(UtilityFunctions.merchantDtoToMerchant(merchantDto));
         iStockRepository.save(UtilityFunctions.stockDetailsDtoToStock(stockDetailsDto));
         return true;
     }
 
     @Override
-    public Boolean getAvailability(String merchantId, String productId) {
+    public Boolean getAvailability(String merchantId, String productId, Long quantity) {
         StockDetailsDto stockDetailsDto = getStockById(new StockId(merchantId, productId));
         if(null == stockDetailsDto)
             return false;
-        return stockDetailsDto.getNoOfItems() > 0;
+        return stockDetailsDto.getNoOfItems() - quantity > 0;
     }
 
 

@@ -72,15 +72,15 @@ public class MerchantController {
      * @return
      */
     @RequestMapping(value = "/decrement-stock", method = RequestMethod.GET)
-    ResponseEntity<Boolean> decrementStock(@RequestParam String merchantId, @RequestParam String productId)  {
+    ResponseEntity<Boolean> decrementStock(@RequestParam String merchantId, @RequestParam String productId, @RequestParam Long quantity)  {
         System.out.println("some connection came in decrement-stock");
-        return new ResponseEntity<>(iMerchantService.decrementStock(merchantId, productId), HttpStatus.OK);
+        return new ResponseEntity<>(iMerchantService.decrementStock(merchantId, productId, quantity), HttpStatus.OK);
     }
 
     @RequestMapping(value = "/get-available", method = RequestMethod.GET)
-    ResponseEntity<Boolean> checkAvailability(@RequestParam String merchantId, @RequestParam String productId) {
+    ResponseEntity<Boolean> checkAvailability(@RequestParam String merchantId, @RequestParam String productId, @RequestParam Long quantity) {
         System.out.println("some connection came in get-available");
-        return new ResponseEntity<>(iMerchantService.getAvailability(merchantId, productId), HttpStatus.OK);
+        return new ResponseEntity<>(iMerchantService.getAvailability(merchantId, productId, quantity), HttpStatus.OK);
     }
 
     /**

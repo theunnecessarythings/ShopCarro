@@ -26,7 +26,7 @@ public class SearchController {
     //Don't do this, this doesn't make much sense now
     @RequestMapping(value = "/search-specific")
     public ResponseEntity<List<ProductDto> > search(@RequestParam(value = "q") String productName, Pageable pageable) throws NoItemsMatchingDescriptionException {
-        List<ProductDto> productDtos = iSearchService.search(productName, pageable);
+        List<ProductDto> productDtos = iSearchService.search(productName.toLowerCase(), pageable);
         if(null == productDtos) {
             //This never happens actually ... great
             throw new NoItemsMatchingDescriptionException("Empty Search Results");
@@ -46,11 +46,12 @@ public class SearchController {
     @RequestMapping(value = "/search")
     public ResponseEntity<List<ProductDto> > searchGeneric(@RequestParam(value = "q") String query, Pageable pageable) throws NoItemsMatchingDescriptionException {
         System.out.println("Some thing came with " + query);
-        List<ProductDto> productDtos = iSearchService.searchGeneric(query, pageable);
+        List<ProductDto> productDtos = iSearchService.searchGeneric(query.toLowerCase(), pageable);
         if(null == productDtos) {
             //This never happens actually ... great
             throw new NoItemsMatchingDescriptionException("Empty Search Results");
         }
+        System.out.println(productDtos);
         return new ResponseEntity<>(productDtos, HttpStatus.OK);
     }
 
