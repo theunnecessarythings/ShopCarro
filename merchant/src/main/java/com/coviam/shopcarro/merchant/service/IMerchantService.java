@@ -23,9 +23,9 @@ public interface IMerchantService {
 
     Boolean createStock(StockDetailsDto stockDetailsDto);
 
-    Boolean decrementStock(String merchantId, String productId);
+    Boolean decrementStock(String merchantId, String productId, Long quantity);
 
-    Boolean getAvailability(String merchantId, String productId);
+    Boolean getAvailability(String merchantId, String productId, Long quantity);
 
     List<StockDetailsDto> getMerchants(MerchantProductListDto merchantProductListDto);
 }
