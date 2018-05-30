@@ -62,7 +62,7 @@ public class OrderController {
          **/
         System.out.println(orderDto);
 
-        List<OrderDetails> listOfProductOfPurchased = new ArrayList<>();
+        List<OrderDetails> listOfProductOfPurchased;
         listOfProductOfPurchased = iOrderservices.productBuy(orderDto);
 
         OrderHistory orderHistory = new OrderHistory(email,listOfProductOfPurchased);
@@ -77,7 +77,7 @@ public class OrderController {
     @RequestMapping(value = "/get-history",method = RequestMethod.GET)
     ResponseEntity<OrderHistory> gethistory(@RequestParam String email) throws ParseException {
         System.out.println("Inside get history");
-        List<OrderDetails> historyProducts = new ArrayList<>();
+        List<OrderDetails> historyProducts;
         historyProducts = iOrderservices.getHistoryOfUser(email);
         OrderHistory orderHistory = new OrderHistory(email,historyProducts);
         System.out.println(orderHistory);
