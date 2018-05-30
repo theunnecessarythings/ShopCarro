@@ -39,7 +39,6 @@ public class MerchantController {
 
     @RequestMapping(value = "/get-merchant-by-id", method = RequestMethod.GET)
     ResponseEntity<MerchantDto> getMerchantById(@RequestParam String merchantId) throws IdNotFoundException {
-        System.out.println("some connection came in get merchant");
         MerchantDto merchantDto = iMerchantService.getMerchantById(merchantId);
         if(null == merchantDto) {
             throw new IdNotFoundException("Merchant not found in the database");
@@ -49,16 +48,13 @@ public class MerchantController {
 
     @RequestMapping(value = "/get-merchants", method = RequestMethod.POST)
     ResponseEntity<List<StockDetailsDto> > getMerchants(@RequestBody MerchantProductListDto merchantProductListDto) {
-        System.out.println(merchantProductListDto);
         List<StockDetailsDto> stockDetailsDtos = iMerchantService.getMerchants(merchantProductListDto);
-        System.out.println(stockDetailsDtos);
         return new ResponseEntity<>(stockDetailsDtos, HttpStatus.OK);
     }
 
 
     @RequestMapping(value = "/get-stock", method = RequestMethod.GET)
     ResponseEntity<StockDetailsDto> getStockDetails(@RequestParam String merchantId, @RequestParam String productId) throws IdNotFoundException {
-        System.out.println("some connection came in get-stock");
         StockDetailsDto stockDetailsDto = iMerchantService.getStockById(new StockId(merchantId, productId));
         if(null == stockDetailsDto) {
             throw new IdNotFoundException("Stock not found in the database");

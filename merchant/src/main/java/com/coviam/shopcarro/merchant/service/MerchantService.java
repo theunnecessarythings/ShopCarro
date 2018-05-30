@@ -98,8 +98,6 @@ public class MerchantService implements IMerchantService {
         StockDetailsDto stockDetailsDto = getStockById(new StockId(merchantId, productId));
         if(null == stockDetailsDto)
             return false;
-        System.out.println(stockDetailsDto.getNoOfItems());
-        System.out.println(quantity);
         return stockDetailsDto.getNoOfItems() - quantity >= 0;
     }
 
