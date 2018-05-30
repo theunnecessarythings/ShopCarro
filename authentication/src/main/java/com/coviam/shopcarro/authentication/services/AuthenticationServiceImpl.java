@@ -9,9 +9,11 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.security.MessageDigest;
+
 import java.security.NoSuchAlgorithmException;
 import java.util.Optional;
+import java.security.MessageDigest;
+
 @Service
 public class AuthenticationServiceImpl implements IAuthenticationService {
     private final Integer maxlength=250;
@@ -49,7 +51,9 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
          *  Checking whether the user is a registered user or not
          *
          * */
+
         validateLoginUser(email,password);
+
         String encrypted = new String();
         encrypted = encryptPassword(password+"shopcarro");
         //System.out.println(encrypted);
@@ -82,6 +86,7 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
             return password;
         }
     }
+
 
     @Override
     public boolean checkAddress(String email) {
@@ -169,4 +174,5 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
         }
         return true;
     }
+
 }

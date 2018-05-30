@@ -8,16 +8,22 @@ package com.coviam.shopcarro.merchant.dto;
 public class MerchantDto {
     private String merchantId;
     private String merchantName;
+
+    /**
+     * Find a way to get this value directly from the database itself
+     */
     private Long noOfProductsOfferedToSell;
     private Long noOfProductsSold;
+    private Double merchantRating;
 
-    public MerchantDto(String merchantId, String merchantName, Long noOfProductsOfferedToSell, Long noOfProductsSold) {
+
+    public MerchantDto(String merchantId, String merchantName, Long noOfProductsOfferedToSell, Long noOfProductsSold, Double merchantRating) {
         this.merchantId = merchantId;
         this.merchantName = merchantName;
-        this.noOfProductsOfferedToSell = noOfProductsOfferedToSell;
-        this.noOfProductsSold = noOfProductsSold;
+        this.noOfProductsOfferedToSell = Long.valueOf(0);
+        this.noOfProductsSold = Long.valueOf(0);
+        this.merchantRating = merchantRating;
     }
-
 
     public MerchantDto() {
     }
@@ -29,7 +35,16 @@ public class MerchantDto {
                 ", merchantName='" + merchantName + '\'' +
                 ", noOfProductsOfferedToSell=" + noOfProductsOfferedToSell +
                 ", noOfProductsSold=" + noOfProductsSold +
+                ", merchantRating=" + merchantRating +
                 '}';
+    }
+
+    public Double getMerchantRating() {
+        return merchantRating;
+    }
+
+    public void setMerchantRating(Double merchantRating) {
+        this.merchantRating = merchantRating;
     }
 
     public String getMerchantId() {

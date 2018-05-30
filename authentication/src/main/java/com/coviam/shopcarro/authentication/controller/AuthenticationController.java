@@ -11,12 +11,25 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+<<<<<<< HEAD
+=======
+import javax.validation.constraints.NotNull;
+import java.security.MessageDigest;
+
+>>>>>>> ce1e2800887e92a130305910dcec72625d7f332d
 
 /**
- * @author sruthi
  * @package com.coviam.shopcarro.authentication.controller
  * @project authentication
  */
+
+/**
+ *
+ * @author: Sandeep Gupta
+ * Password Encryption
+ *
+ * */
+
 @RestController
 @RequestMapping("userAuthentication")
 public class AuthenticationController {
@@ -56,8 +69,20 @@ public class AuthenticationController {
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     ResponseEntity<Boolean> login(@RequestBody @Valid LoginDetailsDto loginDetailsDto) throws CustomException {
         System.out.println(loginDetailsDto.getEmail());
+<<<<<<< HEAD
         Boolean create = iAuthenticationService.loginUser(loginDetailsDto.getEmail(), loginDetailsDto.getPassword());
+=======
+<<<<<<< HEAD
+        boolean create = iAuthenticationService.loginUser(loginDetailsDto.getEmail(), loginDetailsDto.getPassword());
+>>>>>>> ce1e2800887e92a130305910dcec72625d7f332d
 
+=======
+
+        boolean create = iAuthenticationService.loginUser(loginDetailsDto.getEmail(),loginDetailsDto.getPassword());
+        if(!create){
+            return new ResponseEntity<>(create, HttpStatus.CREATED);
+        }
+>>>>>>> a689b0ba9546d393123836bc63017db951e85ca2
         return new ResponseEntity<>(create, HttpStatus.CREATED);
         //return "correct";
     }
@@ -107,4 +132,9 @@ public class AuthenticationController {
 
 
 
+
+
+
+
+}
 

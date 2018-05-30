@@ -6,12 +6,10 @@ import com.coviam.shopcarro.product.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -25,7 +23,7 @@ import java.util.List;
 public class ProductController {
 
     /**
-     *     private String usp;
+     *     private String productName;
      *     private String description;
      *     private String attribute;
      *     private Long price;
@@ -43,13 +41,14 @@ public class ProductController {
      *  to populate the product DB.
      *
      * */
-    @RequestMapping(value= "/create-product",method = RequestMethod.GET)
-    public ProductDto addProduct(@RequestParam String id,@RequestParam String usp, @RequestParam String description, @RequestParam String attribute, @RequestParam Long price, @RequestParam String merchantId,@RequestParam String imgUrl){
-        System.out.println("Hello - "+ usp);
-        ProductDto productDto = new ProductDto();
-        productDto = productService.create(new ProductDto(id,usp,description,attribute,price,merchantId,imgUrl));
-        return productDto;
+    @RequestMapping(value= "/create-product",method = RequestMethod.POST)
+    public ProductDto addProduct(@RequestBody ProductDto productDto){
+        System.out.println("Hello - "+ productDto.getProductName());
+        ProductDto productDtoCopy = new ProductDto();
+        productDtoCopy = productService.create(new ProductDto(productDto.getId(),productDto.getProductName(),productDto.getDescription(),productDto.getAttribute(),productDto.getPrice(),productDto.getMerchantId(),productDto.getImgUrl()));
+        return productDtoCopy;
     }
+
 
     /**
      *  get-products will be returning all the product
@@ -62,10 +61,19 @@ public class ProductController {
         return new ResponseEntity<>(list,HttpStatus.ACCEPTED);
     }
 
+    /**
+     *  get the product the details with product Id
+     * */
     @RequestMapping(value = "/get", method = RequestMethod.GET)
     ResponseEntity<ProductDto> getProduct(@RequestParam String productId) {
         ProductDto product = new ProductDto();
         product = productService.get(productId);
         return new ResponseEntity<>(product,HttpStatus.ACCEPTED);
+    }
+
+    @RequestMapping(value = "/get-product-name",method = RequestMethod.GET)
+    ResponseEntity < String > getProductName(@RequestParam String productId){
+        String productName = productService.getProductNameById(productId);
+        return  new ResponseEntity<>(productName,HttpStatus.ACCEPTED);
     }
 }
