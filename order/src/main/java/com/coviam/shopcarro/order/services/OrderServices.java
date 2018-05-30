@@ -247,21 +247,27 @@ public class OrderServices implements IOrderservices {
                 StandardCharsets.UTF_8.name());
         String emailText = "Thanks for ordering from ShopCarro. Your ";
         if(details.size() == 1){
-            emailText = emailText+"product is ";
+            emailText = emailText+"product is <br> </br>";
         }
         else{
-            emailText = emailText+"products are ";
+            emailText = emailText+"products are <br> </br>";
         }
         emailText = emailText + "\n";
 
+        Long amountPayable= Long.valueOf(0);
         Integer count = 0;
         for(OrderDetails orderDetails: details){
             emailText = emailText + (count+1) + ". ";
-            emailText = emailText + orderDetails.getProductName() + " by " + orderDetails.getMerchantId() + "\n";
+            emailText = emailText + orderDetails.getProductName() + " by Merchant:" + orderDetails.getMerchantName() + " With Quantity " + orderDetails.getQuantity() + " at price "+ orderDetails.getPrice() + " each." + "\n";
             String inlineImage = "<br></br><img src=\""+ orderDetails.getImageUrl()  + "\" width=\"100\" height=\"70\" ></img><br/>";
             emailText += inlineImage;
             count+=1;
+            amountPayable += Long.valueOf(orderDetails.getPrice())*Long.valueOf(orderDetails.getQuantity());
         }
+
+        emailText += "<br></br> Total amount payable is : Rs. " + amountPayable + "/- only <br></br>";
+
+        emailText += "Thanks for ordering from ShopCarro. See you again.";
 
         helper.setText(emailText, true);
         helper.setSubject(subject);

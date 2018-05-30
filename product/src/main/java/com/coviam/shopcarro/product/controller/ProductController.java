@@ -16,11 +16,19 @@ import java.util.*;
  * @project product
  */
 
+/**
+ * end points used.
+ *      /create-product : adding product to the product DB
+ *      /get-products : get all products
+ *      /get-product-by-id : get product description by Id
+ *      /get-product-name : get product name by Id
+ *      /get-product-image : get product image url by Id
+ * */
+
 @RestController
 public class ProductController {
 
     @Autowired ProductService productService;
-
 
     /**
      *  Add the product to the products using get request though it is not asked in the project but still this will be needed
@@ -29,7 +37,7 @@ public class ProductController {
     @RequestMapping(value= "/create-product",method = RequestMethod.POST)
     public ProductDto addProduct(@RequestBody ProductDto productDto){
         System.out.println("Create-Product  - "+ productDto.getProductName());
-        ProductDto productDtoCopy = new ProductDto();
+        ProductDto productDtoCopy;
         productDtoCopy = productService.create(new ProductDto(productDto.getId(),productDto.getProductName(),productDto.getDescription(),productDto.getAttribute(),productDto.getPrice(),productDto.getMerchantId(),productDto.getImgUrl()));
         return productDtoCopy;
     }
@@ -41,7 +49,7 @@ public class ProductController {
     @RequestMapping(value = "/get-products", method = RequestMethod.GET)
     ResponseEntity<List<ProductDto>> getProductList() throws NoSuchElementException{
         System.out.println("get-product");
-        List<ProductDto> list = new ArrayList<>();
+        List<ProductDto> list;
         list = productService.getAllProducts();
         // System.out.println("Controller " + list.size());
         return new ResponseEntity<>(list,HttpStatus.ACCEPTED);
@@ -53,10 +61,14 @@ public class ProductController {
     @RequestMapping(value = "/get-product-by-id", method = RequestMethod.GET)
     ResponseEntity<ProductDto> getProduct(@RequestParam String productId) {
         System.out.println("inside - (get-product-by-id) ");
-        ProductDto product = new ProductDto();
+        ProductDto product;
         product = productService.get(productId);
         return new ResponseEntity<>(product,HttpStatus.ACCEPTED);
     }
+
+    /**
+     * Get product name by Id.
+     * */
 
     @RequestMapping(value = "/get-product-name",method = RequestMethod.GET)
     ResponseEntity < String > getProductName(@RequestParam String productId){
@@ -64,6 +76,10 @@ public class ProductController {
         String productName = productService.getProductNameById(productId);
         return new ResponseEntity<>(productName,HttpStatus.ACCEPTED);
     }
+
+    /**
+     *  Get product image by product Id.
+     * */
 
     @RequestMapping(value = "/get-product-image",method = RequestMethod.GET)
     ResponseEntity < String > getProductImage(@RequestParam String productId){
