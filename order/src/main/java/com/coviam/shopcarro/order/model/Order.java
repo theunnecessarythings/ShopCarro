@@ -1,11 +1,10 @@
 package com.coviam.shopcarro.order.model;
 
 
-import com.coviam.shopcarro.order.details.Details;
+import com.coviam.shopcarro.order.details.OrderDetails;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -16,12 +15,12 @@ public class Order {
     @Id
     private String email;
 
-    private List<Details> details;
+    private List<OrderDetails> details;
 
     public Order() {
     }
 
-    public Order(String email, List<Details> details) {
+    public Order(String email, List<OrderDetails> details) {
         this.email = email;
         this.details = details;
     }
@@ -34,12 +33,20 @@ public class Order {
         this.email = email;
     }
 
-    public List<Details> getDetails() {
+    public List<OrderDetails> getDetails() {
         return details;
     }
 
-    public void setDetails(List<Details> details) {
+    public void setDetails(List<OrderDetails> details) {
         this.details = details;
+    }
+
+    @Override
+    public String toString() {
+        return "Order{" +
+                "email='" + email + '\'' +
+                ", details=" + details +
+                '}';
     }
 
     @Override
@@ -55,13 +62,5 @@ public class Order {
     public int hashCode() {
 
         return Objects.hash(email, details);
-    }
-
-    @Override
-    public String toString() {
-        return "Order{" +
-                "email='" + email + '\'' +
-                ", details=" + details +
-                '}';
     }
 }

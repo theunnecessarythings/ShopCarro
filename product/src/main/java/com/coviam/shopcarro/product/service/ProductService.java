@@ -101,4 +101,13 @@ public class ProductService implements IProductService {
         product = iProductRepository.findById(id);
         return product.get().getProductName();
     }
+
+    public String getProductImageById(String id){
+        if(!iProductRepository.existsById(id)){
+            throw new NoSuchElementException("Product Name not found");
+        }
+        Optional<Product> product = Optional.of(new Product());
+        product = iProductRepository.findById(id);
+        return product.get().getImgUrl();
+    }
 }

@@ -19,25 +19,12 @@ import java.util.*;
 @RestController
 public class ProductController {
 
-    /**
-     * @params: for create-product, if is
-     *     private String productName;
-     *     private String description;
-     *     private String attribute;
-     *     private Long price;
-     *     private List<String> merchantId;
-     *     private String imgUrl;
-     *
-     * */
-
     @Autowired ProductService productService;
 
 
     /**
-     *
      *  Add the product to the products using get request though it is not asked in the project but still this will be needed
      *  to populate the product DB.
-     *
      * */
     @RequestMapping(value= "/create-product",method = RequestMethod.POST)
     public ProductDto addProduct(@RequestBody ProductDto productDto){
@@ -53,7 +40,7 @@ public class ProductController {
      * */
     @RequestMapping(value = "/get-products", method = RequestMethod.GET)
     ResponseEntity<List<ProductDto>> getProductList() throws NoSuchElementException{
-        System.out.println("g");
+        System.out.println("get-product");
         List<ProductDto> list = new ArrayList<>();
         list = productService.getAllProducts();
         // System.out.println("Controller " + list.size());
@@ -76,5 +63,12 @@ public class ProductController {
         System.out.println("Inside get Product Name");
         String productName = productService.getProductNameById(productId);
         return new ResponseEntity<>(productName,HttpStatus.ACCEPTED);
+    }
+
+    @RequestMapping(value = "/get-product-image",method = RequestMethod.GET)
+    ResponseEntity < String > getProductImage(@RequestParam String productId){
+        System.out.println("Inside get Product Image");
+        String productImage = productService.getProductImageById(productId);
+        return new ResponseEntity<>(productImage,HttpStatus.ACCEPTED);
     }
 }

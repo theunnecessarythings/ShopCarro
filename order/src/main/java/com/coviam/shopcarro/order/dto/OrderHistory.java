@@ -1,19 +1,18 @@
 package com.coviam.shopcarro.order.dto;
 
-import com.coviam.shopcarro.order.details.Details;
 import com.coviam.shopcarro.order.details.OrderDetails;
-import java.util.List;
-import java.util.Objects;
 
-public class OrderDto {
+import java.util.List;
+
+public class OrderHistory {
 
     private String email;
     private List<OrderDetails> details;
 
-    public OrderDto() {
+    public OrderHistory() {
     }
 
-    public OrderDto(String email, List<OrderDetails> details) {
+    public OrderHistory(String email, List<OrderDetails> details) {
         this.email = email;
         this.details = details;
     }
@@ -35,23 +34,8 @@ public class OrderDto {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        OrderDto orderDto = (OrderDto) o;
-        return Objects.equals(email, orderDto.email) &&
-                Objects.equals(details, orderDto.details);
-    }
-
-    @Override
-    public int hashCode() {
-
-        return Objects.hash(email, details);
-    }
-
-    @Override
     public String toString() {
-        return "OrderDto{" +
+        return "OrderHistory{" +
                 "email='" + email + '\'' +
                 ", details=" + details +
                 '}';

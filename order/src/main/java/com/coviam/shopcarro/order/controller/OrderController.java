@@ -1,16 +1,14 @@
 package com.coviam.shopcarro.order.controller;
 
-import com.coviam.shopcarro.order.details.Details;
+import com.coviam.shopcarro.order.details.OrderDetails;
 import com.coviam.shopcarro.order.dto.OrderDto;
+import com.coviam.shopcarro.order.dto.OrderHistory;
 import com.coviam.shopcarro.order.model.HistoryProducts;
 import com.coviam.shopcarro.order.services.IOrderservices;
 import com.coviam.shopcarro.order.utility.GetCartClient;
-import com.coviam.shopcarro.order.utility.Urls;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -22,7 +20,17 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.coviam.shopcarro.order.utility.Urls.urlGetCartP;
+
+/**
+ * @author: sandeepgupta
+ *
+ * End points:
+ *  /check-order
+ *  /get-order
+ *  /get-history
+ *  /buy-product-by-id
+ *
+ * */
 
 @RestController
 public class OrderController {
@@ -30,57 +38,60 @@ public class OrderController {
     @Autowired
     private IOrderservices iOrderservices;
 
+    /**
+     *  This end-point will be buying all the products which are in mycart of that particular user. checking whether the
+     *  product is available in the stock, decrementing the stock, storing in the database and sending the mail.
+     * */
+
     @RequestMapping(value = "/check-order",method = RequestMethod.GET)
-    ResponseEntity< OrderDto > getProductsCanBePurchased(@RequestParam String email) throws IOException {
+    ResponseEntity<OrderHistory> getProductsCanBePurchased(@RequestParam String email) throws IOException {
         System.out.println("Inside check-order for placing the order");
-        GetCartClient getCartClient = new GetCartClient();
+        // GetCartClient getCartClient = new GetCartClient();
 
         /**
-         *
          *  To make a request to cart so as to get all the product details which are present in the cart for the current
          *  user
-         *
          * */
-        String urlGetCart = "http://10.177.2.64:8081/get-cart/?email="+email;
+        String urlGetCart = "http://10.177.1.101:8081/get-cart/?email=" + email;
         System.out.println(urlGetCart);
         RestTemplate restTemplate= new RestTemplate();
         OrderDto orderDto = restTemplate.getForObject(urlGetCart,OrderDto.class);
         // System.out.println(orderDto);
         /**
-         *
          *  This will be returning the list of products which are to be purchased.
-         *
          **/
         System.out.println(orderDto);
 
-        List< Details > listOfProductOfPurchased = new ArrayList<>();
+        List<OrderDetails> listOfProductOfPurchased = new ArrayList<>();
         listOfProductOfPurchased = iOrderservices.productBuy(orderDto);
 
-        OrderDto orderDto1 = new OrderDto(email,listOfProductOfPurchased);
-        return new ResponseEntity<>(orderDto1,HttpStatus.ACCEPTED);
+        OrderHistory orderHistory = new OrderHistory(email,listOfProductOfPurchased);
+        return new ResponseEntity<>(orderHistory,HttpStatus.ACCEPTED);
     }
 
     /**
-     *
-     * This will be returning the list of products for a particular product which are being purchased by
-     *  the user.
-     *
+     *  This will be returning the list of products for a particular product which are being purchased by
+     *  the user in past.
      * */
-    @RequestMapping(value = "/history",method = RequestMethod.GET)
-    ResponseEntity<OrderDto> history(@RequestParam String email) throws ParseException {
-        System.out.println("Inside history");
-        OrderDto orderDto = new OrderDto();
-        orderDto = iOrderservices.getHistory(email);
-        System.out.println(orderDto);
-        return new ResponseEntity<>(orderDto,HttpStatus.ACCEPTED);
-    }
 
     @RequestMapping(value = "/get-history",method = RequestMethod.GET)
-    ResponseEntity<List<HistoryProducts>> gethistory(@RequestParam String email) throws ParseException {
+    ResponseEntity<OrderHistory> gethistory(@RequestParam String email) throws ParseException {
         System.out.println("Inside get history");
-        List<HistoryProducts> historyProducts = new ArrayList<>();
+        List<OrderDetails> historyProducts = new ArrayList<>();
         historyProducts = iOrderservices.getHistoryOfUser(email);
-        System.out.println(historyProducts);
-        return new ResponseEntity<>(historyProducts,HttpStatus.ACCEPTED);
+        OrderHistory orderHistory = new OrderHistory(email,historyProducts);
+        System.out.println(orderHistory);
+        return new ResponseEntity<>(orderHistory,HttpStatus.ACCEPTED);
+    }
+
+    /**
+     *  if only products is to be purchased then use this end-point
+     * */
+
+    @RequestMapping(value = "/buy-product-by-id",method = RequestMethod.GET)
+    ResponseEntity < Long > buyProductById(@RequestParam String email,@RequestParam String productId,@RequestParam String merchantId,@RequestParam String quantity,@RequestParam String productName){
+        System.out.println("Inside get Buy product by Id");
+        return new ResponseEntity<>(iOrderservices.purchaseProduct(email,productId,merchantId,quantity,productName),HttpStatus.ACCEPTED);
+            //return null;
     }
 }
