@@ -153,6 +153,16 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
         }
 
     }
+
+    @Override
+    public UserDetailsDto display(String email) {
+        Optional<UserDetails> userDetails1 = iAuthenticationRepository.findById(email);
+        if(!userDetails1.isPresent())
+            return null;
+        return new UserDetailsDto(userDetails1.get().getEmail(),userDetails1.get().getFirstName(),userDetails1.get().getLastName(),userDetails1.get().getPhoneNumber(),userDetails1.get().getAddress(),null);
+
+    }
+
     private boolean validateAddress(String email,String address)throws CustomException{
         if(email==null|| address==null){
             throw new CustomException("false");

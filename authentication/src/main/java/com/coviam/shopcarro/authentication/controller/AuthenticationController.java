@@ -11,7 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 
 /**
  * @author sruthi
@@ -39,7 +38,7 @@ public class AuthenticationController {
 
         System.out.println(userDetailsDto.toString());
 
-        boolean create = iAuthenticationService.createUser(userDetailsDto);
+        Boolean create = iAuthenticationService.createUser(userDetailsDto);
 
             return new ResponseEntity<>(create, HttpStatus.CREATED);
 
@@ -57,7 +56,7 @@ public class AuthenticationController {
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     ResponseEntity<Boolean> login(@RequestBody @Valid LoginDetailsDto loginDetailsDto) throws CustomException {
         System.out.println(loginDetailsDto.getEmail());
-        boolean create = iAuthenticationService.loginUser(loginDetailsDto.getEmail(), loginDetailsDto.getPassword());
+        Boolean create = iAuthenticationService.loginUser(loginDetailsDto.getEmail(), loginDetailsDto.getPassword());
 
         return new ResponseEntity<>(create, HttpStatus.CREATED);
         //return "correct";
@@ -73,10 +72,16 @@ public class AuthenticationController {
 
     @RequestMapping(value = "address-check",method = RequestMethod.GET)
     ResponseEntity<Boolean> address(@RequestParam @Valid String email) {
-        boolean create = iAuthenticationService.checkAddress(email);
+        Boolean create = iAuthenticationService.checkAddress(email);
 
             return new ResponseEntity<>(create, HttpStatus.CREATED);
         // return "created";
+    }
+
+    @RequestMapping(value = "display",method = RequestMethod.GET)
+    UserDetailsDto displayAll(@RequestParam String email){
+        UserDetailsDto userDetailsDto = iAuthenticationService.display(email);
+        return userDetailsDto;
     }
 
     /**
@@ -93,7 +98,7 @@ public class AuthenticationController {
     ResponseEntity<Boolean> addressUpdate(@RequestParam String email,String address) throws CustomException {
 
 
-        boolean create = iAuthenticationService.updateAddress(email,address);
+        Boolean create = iAuthenticationService.updateAddress(email,address);
         return  new ResponseEntity<>(create,HttpStatus.CREATED);
     }
 

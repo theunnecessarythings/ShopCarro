@@ -15,7 +15,7 @@ public class ExceptionController {
     @ExceptionHandler(CustomException.class)
     public ResponseEntity<String> myCustomException(CustomException ex){
         //LOG.warning("Get Comand Exception");
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
     }
 
 
