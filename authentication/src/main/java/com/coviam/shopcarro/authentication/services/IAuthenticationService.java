@@ -16,4 +16,5 @@ public interface IAuthenticationService {
 
      public  boolean checkAddress(String email);
     public boolean updateAddress(String email, String address) throws CustomException;
+    public UserDetailsDto display(String email);
 }

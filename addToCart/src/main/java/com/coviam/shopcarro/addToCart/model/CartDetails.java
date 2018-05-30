@@ -9,7 +9,7 @@ import java.util.Objects;
 
 @Document(collection=CartDetails.COLLECTION_NAME)
 public class CartDetails {
-    public static final String COLLECTION_NAME="cartdetail";
+    public static final String COLLECTION_NAME="cart";
 
     @Id
     private String email;
