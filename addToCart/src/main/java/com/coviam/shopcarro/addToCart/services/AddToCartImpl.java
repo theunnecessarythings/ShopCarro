@@ -23,32 +23,24 @@ public class AddToCartImpl implements IAddToCartService {
     /**
      * addToCart implementation is used to insert the data in the DB.
      */
-
-
     @Override
-    public Boolean addToCart(String email, String merchantId, String Id,String quantity) throws CustomException {
+    public Boolean addToCart(String email, String merchantId, String Id, String quantity) throws CustomException {
         System.out.println(email + merchantId + Id);
-        boolean create = validateUser(email, merchantId, Id);
+        boolean create = validate(email, merchantId, Id);
         if (!create)
             return false;
-
         /**
          *
          * if the key (email) doesn't exists in the DB than do this or do it otherwise
          *
          * */
+        RestTemplate restTemplate = new RestTemplate();
+        String urlMerchantProductAvailable = "http://10.177.1.239:8083/get-available/?merchantId=" + merchantId + "&productId=" + Id + "&quantity=" + quantity;
+        Boolean available = restTemplate.getForObject(urlMerchantProductAvailable, Boolean.class);
 
-        RestTemplate restTemplate= new RestTemplate();
-        String urlMerchantProductAvailable = "http://10.177.1.239:8083/get-available/?merchantId=" + merchantId + "&productId="+Id + "&quantity=" +quantity;
-        Boolean available = restTemplate.getForObject(urlMerchantProductAvailable,Boolean.class);
-
-        if(!available){
+        if (!available) {
             return false;
         }
-
-
-
-
 
         if (!iAddToCartRepository.existsById(email)) {
             List<Details> detailsList = new ArrayList<>();
@@ -60,59 +52,64 @@ public class AddToCartImpl implements IAddToCartService {
              * Api calls for accessing merchant database for merchant name and price of the product
              *
              */
-            String urlMerchantProductDetails = "http://10.177.1.239:8083/get-merchant-product/?merchantId=" + merchantId + "&productId="+Id + "&quantity=" +quantity;
-           // RestTemplate restTemplate= new RestTemplate();
-            MerchantDetails merchantDetails = restTemplate.getForObject(urlMerchantProductDetails,MerchantDetails.class);
-
+            String urlMerchantProductDetails = "http://10.177.1.239:8083/get-merchant-product/?merchantId=" + merchantId + "&productId=" + Id + "&quantity=" + quantity;
+            MerchantDetails merchantDetails = restTemplate.getForObject(urlMerchantProductDetails, MerchantDetails.class);
 
             /**
              *
              * Api calls for accessing product database for product name and the image url
              *
              */
-            String urlProductImage = "http://10.177.1.69:8080/get-product-image/?productId="+Id;
-            String imageURL = restTemplate.getForObject(urlProductImage,String.class);
-
-            String urlProductName = "http://10.177.1.69:8080/get-product-name/?productId="+Id;
-            String productName = restTemplate.getForObject(urlProductName,String.class);
-
-
-            detailsList.add(new Details(merchantId, Id,quantity,merchantDetails.getMerchantName(),productName,merchantDetails.getPrice(),imageURL,null));
-
+            String urlProductImage = "http://10.177.1.69:8080/get-product-image/?productId=" + Id;
+            String imageURL = restTemplate.getForObject(urlProductImage, String.class);
+            String urlProductName = "http://10.177.1.69:8080/get-product-name/?productId=" + Id;
+            String productName = restTemplate.getForObject(urlProductName, String.class);
+            detailsList.add(new Details(merchantId, Id, quantity, merchantDetails.getMerchantName(), productName, merchantDetails.getPrice(), imageURL, null));
             CartDetails cartDetails = new CartDetails(email, detailsList);
             iAddToCartRepository.save(cartDetails);
             return true;
         }
-
         Optional<CartDetails> cartDetailsOpt = iAddToCartRepository.findById(email);
         CartDetails cartDetails = cartDetailsOpt.get();
-        List<Details> list = new ArrayList<>();
-        list.addAll(cartDetails.getDetails());
+        Long totalQuantity = Long.valueOf(quantity);
+        List<Details> list = cartDetails.getDetails();
+        System.out.println(list);
+        /**
+         *  Api calls for accessing merchant database for merchant name and price of the product
+         */
+        String urlMerchantProductDetails = "http://10.177.1.239:8083/get-merchant-product/?merchantId=" + merchantId + "&productId=" + Id + "&quantity=" + quantity;
+        MerchantDetails merchantDetails = restTemplate.getForObject(urlMerchantProductDetails, MerchantDetails.class);
+        /**
+         * Api calls for accessing product database for product name and the image url
+         */
+        String urlProductImage = "http://10.177.1.69:8080/get-product-image/?productId=" + Id;
+        String imageURL = restTemplate.getForObject(urlProductImage, String.class);
+        String urlProductName = "http://10.177.1.69:8080/get-product-name/?productId=" + Id;
+        String productName = restTemplate.getForObject(urlProductName, String.class);
+
+        List<Details> listOfRedundantProducts = new ArrayList<>();
 
         /**
-         *     Api calls for accessing merchant database for merchant name and price of the product
-         *
-         */
-
-
-        String urlMerchantProductDetails = "http://10.177.1.239:8083/get-merchant-product/?merchantId=" + merchantId + "&productId="+Id + "&quantity=" +quantity;
-        MerchantDetails merchantDetails = restTemplate.getForObject(urlMerchantProductDetails,MerchantDetails.class);
-
-
+         * Checking for the redundant projects.
+         * */
+        for (Details details:list) {
+            if (merchantId.equals(details.getMerchantId()) && (Id.equals(details.getId()))) {
+                totalQuantity += Long.valueOf(details.getQuantity());
+                listOfRedundantProducts.add(details);
+            }
+        }
         /**
-         * Api calls for accessing product database for product name and the image url    
-         *
-         */
-        String urlProductImage = "http://10.177.1.69:8080/get-product-image/?productId="+Id;
-        String imageURL = restTemplate.getForObject(urlProductImage,String.class);
+         * Removing all the redundant projects
+         * */
+        for(Details details:listOfRedundantProducts){
+            list.remove(details);
+        }
 
-        String urlProductName = "http://10.177.1.69:8080/get-product-name/?productId="+Id;
-        String productName = restTemplate.getForObject(urlProductName,String.class);
-
-
-        
-
-        list.add(new Details(merchantId, Id,quantity,merchantDetails.getMerchantName(),productName,merchantDetails.getPrice(),imageURL,null));
+        //quantity = String.valueOf(totalQuantity);
+        System.out.println(list);
+        quantity = String.valueOf(totalQuantity);
+        System.out.println(quantity);
+        list.add(new Details(merchantId, Id, quantity, merchantDetails.getMerchantName(), productName, merchantDetails.getPrice(), imageURL, null));
         CartDetails cartDetails1 = new CartDetails(email, list);
         iAddToCartRepository.save(cartDetails1);
         return true;
@@ -120,35 +117,28 @@ public class AddToCartImpl implements IAddToCartService {
     }
 
     @Override
-    public boolean delItem(String email, String merchantId, String id,String quantity) throws CustomException {
-        validateUser(email, merchantId, id);
+    public boolean delItem(String email, String merchantId, String id, String quantity) throws CustomException {
+        validate(email, merchantId, id);
         if (!iAddToCartRepository.existsById(email)) {
             return false;
         }
-        String urlMerchantProductDetails = "http://10.177.1.239:8083/get-merchant-product/?merchantId=" + merchantId + "&productId="+id + "&quantity=" +quantity;
+        RestTemplate restTemplate = new RestTemplate();
+        String urlMerchantProductDetails = "http://10.177.1.239:8083/get-merchant-product/?merchantId=" + merchantId + "&productId=" + id + "&quantity=" + quantity;
         System.out.println(urlMerchantProductDetails);
-        RestTemplate restTemplate= new RestTemplate();
-        MerchantDetails merchantDetails = restTemplate.getForObject(urlMerchantProductDetails,MerchantDetails.class);
-
-        String urlProductImage = "http://10.177.1.69:8080/get-product-image/?productId="+id;
-        String imageURL = restTemplate.getForObject(urlProductImage,String.class);
-
-        String urlProductName = "http://10.177.1.69:8080/get-product-name/?productId="+id;
-        String productName = restTemplate.getForObject(urlProductName,String.class);
+        MerchantDetails merchantDetails = restTemplate.getForObject(urlMerchantProductDetails, MerchantDetails.class);
+        String urlProductImage = "http://10.177.1.69:8080/get-product-image/?productId=" + id;
+        String imageURL = restTemplate.getForObject(urlProductImage, String.class);
+        String urlProductName = "http://10.177.1.69:8080/get-product-name/?productId=" + id;
+        String productName = restTemplate.getForObject(urlProductName, String.class);
         Optional<CartDetails> cartDetailsOpt = iAddToCartRepository.findById(email);
-        Details details = new Details(merchantId, id,quantity,merchantDetails.getMerchantName(),productName,merchantDetails.getPrice(),imageURL,null);
+        Details details = new Details(merchantId, id, quantity, merchantDetails.getMerchantName(), productName, merchantDetails.getPrice(), imageURL, null);
         CartDetails cartDetails = cartDetailsOpt.get();
         List<Details> list = new ArrayList<>();
         list = cartDetails.getDetails();
         System.out.println(details);
         list.remove(details);
-
-
-
-
-
         System.out.println(list);
-       CartDetails cart = new CartDetails(email, list);
+        CartDetails cart = new CartDetails(email, list);
         iAddToCartRepository.save(cart);
         return true;
     }
@@ -177,16 +167,14 @@ public class AddToCartImpl implements IAddToCartService {
             return false;
         }
 
-            Optional<CartDetails> cartDetailsOpt = iAddToCartRepository.findById(email);
-            CartDetails cartDetails = cartDetailsOpt.get();
-            List<Details> list = new ArrayList<>();
-            list = cartDetails.getDetails();
-
-            list.removeAll(list);
-
-            CartDetails cart = new CartDetails(email, list);
-            iAddToCartRepository.save(cart);
-            return true;
+        Optional<CartDetails> cartDetailsOpt = iAddToCartRepository.findById(email);
+        CartDetails cartDetails = cartDetailsOpt.get();
+        List<Details> list = new ArrayList<>();
+        list = cartDetails.getDetails();
+        list.removeAll(list);
+        CartDetails cart = new CartDetails(email, list);
+        iAddToCartRepository.save(cart);
+        return true;
     }
 
     @Override
@@ -200,9 +188,8 @@ public class AddToCartImpl implements IAddToCartService {
         return null;
     }
 
-    private boolean validateUser(String email, String merchantId, String id) throws CustomException {
+    private boolean validate(String email, String merchantId, String id) throws CustomException {
         if (email.length() == 0 || merchantId.length() == 0 || id.length() == 0) {
-            System.out.println("hey");
             throw new CustomException("false");
         }
         return true;
