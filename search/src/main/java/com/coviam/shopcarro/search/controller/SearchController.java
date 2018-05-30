@@ -45,7 +45,7 @@ public class SearchController {
      */
     @RequestMapping(value = "/search")
     public ResponseEntity<List<ProductDto> > searchGeneric(@RequestParam(value = "q") String query, Pageable pageable) throws NoItemsMatchingDescriptionException {
-        System.out.println("Some thing came with " + query);
+        System.out.println("incoming request : " + query);
         List<ProductDto> productDtos = iSearchService.searchGeneric(query.toLowerCase(), pageable);
         if(null == productDtos) {
             //This never happens actually ... great

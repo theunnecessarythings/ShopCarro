@@ -17,6 +17,7 @@ public class UtilityFunctions {
     public static ProductDto productToProductDto(Product product) {
         ProductDto productDto = new ProductDto();
         productDto.setDescription(product.getDescription());
+        productDto.setAttribute(product.getAttribute());
         productDto.setId(product.getId());
         productDto.setImgUrl(product.getImgUrl());
         productDto.setMerchantId(product.getMerchantId());
@@ -31,6 +32,7 @@ public class UtilityFunctions {
         product.setId(productDto.getId());
         product.setImgUrl(productDto.getImgUrl());
         product.setMerchantId(productDto.getMerchantId());
+        product.setAttribute(productDto.getAttribute());
         product.setPrice(productDto.getPrice());
         product.setProductName(productDto.getProductName());
         return product;

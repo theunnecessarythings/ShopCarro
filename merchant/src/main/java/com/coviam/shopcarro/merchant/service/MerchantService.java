@@ -13,9 +13,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * @author sreerajr
@@ -96,23 +98,31 @@ public class MerchantService implements IMerchantService {
         StockDetailsDto stockDetailsDto = getStockById(new StockId(merchantId, productId));
         if(null == stockDetailsDto)
             return false;
-        return stockDetailsDto.getNoOfItems() - quantity > 0;
+        System.out.println(stockDetailsDto.getNoOfItems());
+        System.out.println(quantity);
+        return stockDetailsDto.getNoOfItems() - quantity >= 0;
     }
 
 
 
     @Override
     public List<StockDetailsDto> getMerchants(MerchantProductListDto merchantProductListDto) {
-        List<Stock> stocks = calculateScore(iStockRepository.findByIdIn(merchantProductListDto.getStockIds()));
+        List<Stock> stocks = calculateScore(iStockRepository.findByIdIn(merchantProductListDto.getStockIds()), merchantProductListDto.getStockIds());
         //Sort the merchants by the weighted average score
         Collections.sort(stocks);
         return UtilityFunctions.stockListToDtoList(stocks);
     }
 
 
-    private List<Stock> calculateScore(List<Stock> stocks) {
+    private List<Stock> calculateScore(List<Stock> stocks, List<StockId> stockIds) {
+
+        List<Double> ratings = new ArrayList<>();
+//        List<String> merchantIds = stockIds.stream().map((stockId) -> stockId.getMerchantId()).collect(Collectors.toList());
+//        List<Merchant> merchants = iMerchantRepository.findByMerchantIdIn(merchantIds);
 
         for(Stock stock : stocks) {
+
+            //Use the findByMerchantIdIn(List<String> ids) later
             Merchant merchant = iMerchantRepository.findById(stock.getId().getMerchantId()).get();
             Double rating = merchant.getMerchantRating();
             Long offered = iStockRepository.countByIdMerchantId(merchant.getMerchantId());
@@ -124,8 +134,23 @@ public class MerchantService implements IMerchantService {
 
             Double stockRating = ratingWeight * rating + offered * offeredWeight + sold * soldWeight + items * itemsWeight + (1 / price) * priceWeight;
             stock.setRating(stockRating);
+            ratings.add(stockRating);
+        }
+
+        /**
+         *
+         *
+         * Don't do this
+         *
+         */
+
+        Double maxRating = Collections.max(ratings);
+        for(Stock stock : stocks){
+            stock.setRating((stock.getRating() / maxRating) * 5);
         }
 
         return stocks;
     }
+
+
 }

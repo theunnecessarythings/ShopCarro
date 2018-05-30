@@ -18,6 +18,6 @@ import java.util.List;
 @Repository
 public interface ISearchRepository extends SolrCrudRepository<Product, String> {
     public Page<Product> findByProductName(String productName, Pageable pageable);
-    public Page<Product> findByProductNameContainsOrDescriptionContains(List<String> productName, List<String> description, Pageable pageable);
+    public Page<Product> findByProductNameContainsOrDescriptionContainsOrAttributeContains(List<String> productName, List<String> description, List<String> attribute, Pageable pageable);
 
 }

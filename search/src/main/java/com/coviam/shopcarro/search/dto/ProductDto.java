@@ -1,5 +1,7 @@
 package com.coviam.shopcarro.search.dto;
 
+import java.util.List;
+
 /**
  * @author sreerajr
  * @package com.coviam.shopcarro.search.dto
@@ -10,15 +12,20 @@ public class ProductDto {
     private String productName;
     private String description;
     private Long price;
-    private String merchantId;
+    private String attribute;
+    private List<String> merchantId;
     private String imgUrl;
 
+    public void setMerchantId(List<String> merchantId) {
+        this.merchantId = merchantId;
+    }
 
-    public ProductDto(String id, String productName, String description, Long price, String merchantId, String imgUrl) {
+    public ProductDto(String id, String productName, String description, Long price, String attribute, List<String> merchantId, String imgUrl) {
         this.id = id;
         this.productName = productName;
         this.description = description;
         this.price = price;
+        this.attribute = attribute;
         this.merchantId = merchantId;
         this.imgUrl = imgUrl;
     }
@@ -58,13 +65,19 @@ public class ProductDto {
         this.price = price;
     }
 
-    public String getMerchantId() {
+
+    public List<String> getMerchantId() {
         return merchantId;
     }
 
-    public void setMerchantId(String merchantId) {
-        this.merchantId = merchantId;
+    public String getAttribute() {
+        return attribute;
     }
+
+    public void setAttribute(String attribute) {
+        this.attribute = attribute;
+    }
+
 
     public String getImgUrl() {
         return imgUrl;
@@ -80,7 +93,8 @@ public class ProductDto {
                 "id='" + id + '\'' +
                 ", productName='" + productName + '\'' +
                 ", description='" + description + '\'' +
-                ", price='" + price + '\'' +
+                ", price=" + price +
+                ", attribute='" + attribute + '\'' +
                 ", merchantId='" + merchantId + '\'' +
                 ", imgUrl='" + imgUrl + '\'' +
                 '}';

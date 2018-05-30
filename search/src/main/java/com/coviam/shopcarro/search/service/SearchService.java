@@ -34,8 +34,8 @@ public class SearchService implements ISearchService {
 
     @Override
     public Boolean addProductToSearchRepository(ProductDto productDto) {
-        if(iSearchRepository.findById(productDto.getId()).isPresent())
-            return false;
+//        if(iSearchRepository.findById(productDto.getId()).isPresent())
+//            return false;
         iSearchRepository.save(UtilityFunctions.productDtoToProduct(productDto));
         return true;
     }
@@ -43,7 +43,7 @@ public class SearchService implements ISearchService {
     @Override
     public List<ProductDto> searchGeneric(String query, Pageable pageable) {
         List<String> strings = Arrays.asList(query.split(" "));
-        Page<Product> products = iSearchRepository.findByProductNameContainsOrDescriptionContains(strings, strings, pageable);
+        Page<Product> products = iSearchRepository.findByProductNameContainsOrDescriptionContainsOrAttributeContains(strings, strings, strings, pageable);
         return UtilityFunctions.productsToProductDtos(products.getContent());
     }
 }

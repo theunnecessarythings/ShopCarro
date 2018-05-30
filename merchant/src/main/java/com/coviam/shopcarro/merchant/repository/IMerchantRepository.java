@@ -1,8 +1,12 @@
 package com.coviam.shopcarro.merchant.repository;
 
 import com.coviam.shopcarro.merchant.model.Merchant;
+import com.coviam.shopcarro.merchant.model.Stock;
+import com.coviam.shopcarro.merchant.model.key.StockId;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 /**
  * @author sreerajr
@@ -12,4 +16,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface IMerchantRepository extends CrudRepository<Merchant, String> {
+    List<Merchant> findByMerchantIdIn(List<String> ids);
 }

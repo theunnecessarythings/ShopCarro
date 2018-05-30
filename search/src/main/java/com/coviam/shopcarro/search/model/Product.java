@@ -5,12 +5,14 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.solr.core.mapping.Indexed;
 import org.springframework.data.solr.core.mapping.SolrDocument;
 
+import java.util.List;
+
 /**
  * @author sreerajr
  * @package com.coviam.shopcarro.search.model
  * @project search
  */
-@SolrDocument(solrCoreName = "products")
+@SolrDocument(solrCoreName = "shopcarro")
 public class Product {
     @Id
     @Field
@@ -20,11 +22,12 @@ public class Product {
     @Indexed
     private String productName;
 
-    public Product(String id, String productName, String description, Long price, String merchantId, String imgUrl) {
+    public Product(String id, String productName, String description, Long price, String attribute, List<String> merchantId, String imgUrl) {
         this.id = id;
         this.productName = productName;
         this.description = description;
         this.price = price;
+        this.attribute = attribute;
         this.merchantId = merchantId;
         this.imgUrl = imgUrl;
     }
@@ -45,7 +48,11 @@ public class Product {
     private Long price;
 
     @Field
-    private String merchantId;
+    @Indexed
+    private String attribute;
+
+    @Field
+    private List<String> merchantId;
 
     @Field
     private String imgUrl;
@@ -78,11 +85,19 @@ public class Product {
         this.price = price;
     }
 
-    public String getMerchantId() {
+    public String getAttribute() {
+        return attribute;
+    }
+
+    public void setAttribute(String attribute) {
+        this.attribute = attribute;
+    }
+
+    public List<String> getMerchantId() {
         return merchantId;
     }
 
-    public void setMerchantId(String merchantId) {
+    public void setMerchantId(List<String> merchantId) {
         this.merchantId = merchantId;
     }
 
