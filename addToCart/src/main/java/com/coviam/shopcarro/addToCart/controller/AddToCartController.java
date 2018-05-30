@@ -37,7 +37,7 @@ public class AddToCartController {
 
             // System.out.println("hey");
 
-            boolean create = iAddToCartService.addToCart(email, merchantId, id, quantity);
+            Boolean create = iAddToCartService.addToCart(email, merchantId, id, quantity);
             System.out.println(create);
             return new ResponseEntity<>(create, HttpStatus.CREATED);
         }

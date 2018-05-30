@@ -11,12 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-<<<<<<< HEAD
-=======
-import javax.validation.constraints.NotNull;
-import java.security.MessageDigest;
 
->>>>>>> ce1e2800887e92a130305910dcec72625d7f332d
 
 /**
  * @package com.coviam.shopcarro.authentication.controller
@@ -69,20 +64,10 @@ public class AuthenticationController {
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     ResponseEntity<Boolean> login(@RequestBody @Valid LoginDetailsDto loginDetailsDto) throws CustomException {
         System.out.println(loginDetailsDto.getEmail());
-<<<<<<< HEAD
+
         Boolean create = iAuthenticationService.loginUser(loginDetailsDto.getEmail(), loginDetailsDto.getPassword());
-=======
-<<<<<<< HEAD
-        boolean create = iAuthenticationService.loginUser(loginDetailsDto.getEmail(), loginDetailsDto.getPassword());
->>>>>>> ce1e2800887e92a130305910dcec72625d7f332d
 
-=======
 
-        boolean create = iAuthenticationService.loginUser(loginDetailsDto.getEmail(),loginDetailsDto.getPassword());
-        if(!create){
-            return new ResponseEntity<>(create, HttpStatus.CREATED);
-        }
->>>>>>> a689b0ba9546d393123836bc63017db951e85ca2
         return new ResponseEntity<>(create, HttpStatus.CREATED);
         //return "correct";
     }
@@ -104,7 +89,7 @@ public class AuthenticationController {
     }
 
     @RequestMapping(value = "display",method = RequestMethod.GET)
-    UserDetailsDto displayAll(@RequestParam String email){
+    UserDetailsDto userDetails(@RequestParam String email){
         UserDetailsDto userDetailsDto = iAuthenticationService.display(email);
         return userDetailsDto;
     }
@@ -121,8 +106,6 @@ public class AuthenticationController {
 
     @RequestMapping(value = "address-update",method = RequestMethod.GET)
     ResponseEntity<Boolean> addressUpdate(@RequestParam String email,String address) throws CustomException {
-
-
         Boolean create = iAuthenticationService.updateAddress(email,address);
         return  new ResponseEntity<>(create,HttpStatus.CREATED);
     }
@@ -136,5 +119,5 @@ public class AuthenticationController {
 
 
 
-}
+
 

@@ -38,6 +38,16 @@ public class AddToCartImpl implements IAddToCartService {
          *
          * */
 
+        RestTemplate restTemplate= new RestTemplate();
+        String urlMerchantProductAvailable = "http://10.177.1.239:8083/get-available/?merchantId=" + merchantId + "&productId="+Id + "&quantity=" +quantity;
+        Boolean available = restTemplate.getForObject(urlMerchantProductAvailable,Boolean.class);
+
+        if(!available){
+            return false;
+        }
+
+
+
 
 
         if (!iAddToCartRepository.existsById(email)) {
@@ -51,7 +61,7 @@ public class AddToCartImpl implements IAddToCartService {
              *
              */
             String urlMerchantProductDetails = "http://10.177.1.239:8083/get-merchant-product/?merchantId=" + merchantId + "&productId="+Id + "&quantity=" +quantity;
-            RestTemplate restTemplate= new RestTemplate();
+           // RestTemplate restTemplate= new RestTemplate();
             MerchantDetails merchantDetails = restTemplate.getForObject(urlMerchantProductDetails,MerchantDetails.class);
 
 
@@ -86,7 +96,6 @@ public class AddToCartImpl implements IAddToCartService {
 
 
         String urlMerchantProductDetails = "http://10.177.1.239:8083/get-merchant-product/?merchantId=" + merchantId + "&productId="+Id + "&quantity=" +quantity;
-        RestTemplate restTemplate= new RestTemplate();
         MerchantDetails merchantDetails = restTemplate.getForObject(urlMerchantProductDetails,MerchantDetails.class);
 
 
@@ -99,6 +108,9 @@ public class AddToCartImpl implements IAddToCartService {
 
         String urlProductName = "http://10.177.1.69:8080/get-product-name/?productId="+Id;
         String productName = restTemplate.getForObject(urlProductName,String.class);
+
+
+        
 
         list.add(new Details(merchantId, Id,quantity,merchantDetails.getMerchantName(),productName,merchantDetails.getPrice(),imageURL,null));
         CartDetails cartDetails1 = new CartDetails(email, list);
