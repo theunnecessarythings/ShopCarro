@@ -7,6 +7,7 @@ import com.coviam.shopcarro.order.model.Order;
 import com.coviam.shopcarro.order.repository.OrderRepository;
 import com.coviam.shopcarro.order.utility.SendMail;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -28,7 +29,6 @@ import static com.coviam.shopcarro.order.utility.Urls.*;
 /**
  *
  * @author: sandeepgupta
- * Yet to be done with expression language like urls and email login credentials.
  *
  * */
 
@@ -39,9 +39,17 @@ public class OrderServices implements IOrderservices {
     private OrderRepository orderRepository;
 
     @Autowired
-     private JavaMailSender javaMailSender;
+    private JavaMailSender javaMailSender;
 
     public SendMail sendMail;
+
+    String timeStamp = new SimpleDateFormat("dd/MM/yyyy").format(Calendar.getInstance().getTime());
+
+    @Value("${urlGetAvailableMerchant}") private String urlOfGetAvailableMerchant;
+    @Value("${urlDecrementStock}") private String urlOfDecrementStock;
+    @Value("${urlDelCart}") private String urlOfDelCart;
+    @Value("${urlMerchantProductDetails}") private String urlOfMerchantProductDetails;
+    @Value("${urlProductImage}") private String urlOfProductImage;
 
     public List<OrderDetails> productBuy(OrderDto orderDto){
         /**
@@ -54,21 +62,20 @@ public class OrderServices implements IOrderservices {
 
             /**
              *
-             * get the stocks for a particular a particular product and merchant Id.
+             *         get the stocks for a particular a particular product and merchant Id.
              *
              *          @params: productId, merchantId and Quantity
              *
              *         Calling the merchant services to get the required availability
              *
              * */
-            String urlGetAvailable = urlGetAvailableMerchant + details.getMerchantId()+"&productId="+details.getId()+"&quantity="+details.getQuantity();
+            String urlGetAvailable = urlOfGetAvailableMerchant + details.getMerchantId()+"&productId="+details.getId()+"&quantity="+details.getQuantity();
             System.out.println(urlGetAvailable);
             RestTemplate restTemplate= new RestTemplate();
             Boolean availability;
             availability = restTemplate.getForObject(urlGetAvailable,Boolean.class);
 
             if(availability){
-
                 /**
                  * Getting date
                  * */
@@ -80,7 +87,7 @@ public class OrderServices implements IOrderservices {
                 /**
                  *  link to decrement the stock.
                  * */
-                String decrementStock = urlDecrementStock + details.getMerchantId()+"&productId="+details.getId()+"&quantity="+details.getQuantity();
+                String decrementStock = urlOfDecrementStock + details.getMerchantId()+"&productId="+details.getId()+"&quantity="+details.getQuantity();
                 RestTemplate restTemplate3= new RestTemplate();
                 Boolean decremented;
                 decremented = restTemplate3.getForObject(decrementStock,Boolean.class);
@@ -98,16 +105,19 @@ public class OrderServices implements IOrderservices {
         System.out.println(listOfProductsPurchased);
         System.out.println("Sending Email");
 
-       try {
-            Sendingemail(order.getEmail(),listOfProductsPurchased,"Order Placed");
-        } catch (MessagingException e) {
-            e.printStackTrace();
+        if(listOfProductsPurchased.size() > 0) {
+            try {
+                SendMail sendMail = new SendMail();
+                Sendingemail(order.getEmail(), listOfProductsPurchased, "Order Placed successfully");
+            } catch (MessagingException e) {
+                e.printStackTrace();
+            }
         }
 
-        String urlGetCart = "http://10.177.1.101:8081/del-all/?email=" + orderDto.getEmail();
-        System.out.println("Deleting from cart " + urlGetCart);
+        String urlDelCart = urlOfDelCart + orderDto.getEmail();
+        System.out.println("Deleting from cart " + urlDelCart);
         RestTemplate restTemplate= new RestTemplate();
-        Boolean deletedFromCart = restTemplate.getForObject(urlGetCart,Boolean.class);
+        Boolean deletedFromCart = restTemplate.getForObject(urlDelCart,Boolean.class);
 
         return listOfProductsPurchased;
     }
@@ -149,9 +159,7 @@ public class OrderServices implements IOrderservices {
     }
 
     /**
-     *
      *  Will be returning the history if present otherwise this will be returning the empty list.
-     *
      * */
 
     public List<OrderDetails> getHistoryOfUser(String email) throws ParseException{
@@ -170,7 +178,7 @@ public class OrderServices implements IOrderservices {
      * */
 
     public Long purchaseProduct(String email, String productId, String merchantId, String quantity, String productName){
-        String urlGetAvailable = urlGetAvailableMerchant + merchantId +"&productId="+ productId +"&quantity="+ quantity;
+        String urlGetAvailable = urlOfGetAvailableMerchant + merchantId +"&productId="+ productId +"&quantity="+ quantity;
         System.out.println(urlGetAvailable);
         RestTemplate restTemplate= new RestTemplate();
         Boolean availability;
@@ -182,33 +190,25 @@ public class OrderServices implements IOrderservices {
              * fetching the merchantName and price from merchant server
              * */
 
-            String urlMerchantProductDetail = urlMerchantProductDetails + merchantId + "&productId=" + productId + "&quantity=" + quantity;
+            String urlMerchantProductDetail = urlOfMerchantProductDetails + merchantId + "&productId=" + productId + "&quantity=" + quantity;
             System.out.println(" Getting merchant product Details: " + urlMerchantProductDetail);
-            RestTemplate restTemplate1 = new RestTemplate();
-            MerchantProductDetails merchantProductDetails;
-            merchantProductDetails = restTemplate1.getForObject(urlMerchantProductDetail, MerchantProductDetails.class);
+            MerchantProductDetails merchantProductDetails = restTemplate.getForObject(urlMerchantProductDetail, MerchantProductDetails.class);
 
             /**
-             *
              * fetching the image url from product server
-             *
              * */
-            String getImageUrl = urlProductImage + productId;
+            String getImageUrl = urlOfProductImage + productId;
             System.out.println("Getting image url " + getImageUrl);
-            RestTemplate restTemplate2 = new RestTemplate();
-            String imageUrl = restTemplate2.getForObject(getImageUrl,String.class);
+            String imageUrl = restTemplate.getForObject(getImageUrl,String.class);
 
             /**
              * Getting date
              * */
-            String timeStamp = new SimpleDateFormat("dd/MM/yyyy").format(Calendar.getInstance().getTime());
 
             OrderDetails orderDetails = new OrderDetails(productId,merchantId,merchantProductDetails.getMerchantName(),productName,imageUrl,timeStamp,quantity,merchantProductDetails.getPrice());
 
-            String decrementStock = urlDecrementStock + merchantId +"&productId="+ productId +"&quantity="+ quantity;
-            RestTemplate restTemplate3= new RestTemplate();
-            Boolean decremented;
-            decremented = restTemplate3.getForObject(decrementStock,Boolean.class);
+            String decrementStock = urlOfDecrementStock + merchantId +"&productId="+ productId +"&quantity="+ quantity;
+            Boolean decremented = restTemplate.getForObject(decrementStock,Boolean.class);
 
             List<OrderDetails> listOfProductsPurchased = new ArrayList<>();
             listOfProductsPurchased.add(orderDetails);
@@ -223,9 +223,9 @@ public class OrderServices implements IOrderservices {
             orderRepository.save(order);
             System.out.println(order.getEmail());
             System.out.println(listOfProductsPurchased);
-            System.out.println("Sending Email");
             try {
-                Sendingemail(order.getEmail(),listOfProductsPurchased,"Order Placed");
+                SendMail sendMail = new SendMail();
+                Sendingemail(order.getEmail(),listOfProductsPurchased,"Order Placed successfully");
             } catch (MessagingException e) {
                 e.printStackTrace();
             }
@@ -234,12 +234,7 @@ public class OrderServices implements IOrderservices {
         return Long.valueOf(0);
     }
 
-    /**
-     * Mail for sending the images with mail using javaMailSender using MimeMessage
-     *
-     * */
-
-    public void Sendingemail(String email, List<OrderDetails> details,String subject) throws MessagingException {
+    public void Sendingemail(String email, List<OrderDetails> details, String subject) throws MessagingException {
         System.out.println("Sending mail ");
         MimeMessage message = javaMailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message,
@@ -259,7 +254,7 @@ public class OrderServices implements IOrderservices {
         for(OrderDetails orderDetails: details){
             emailText = emailText + (count+1) + ". ";
             emailText = emailText + orderDetails.getProductName() + " by Merchant:" + orderDetails.getMerchantName() + " With Quantity " + orderDetails.getQuantity() + " at price "+ orderDetails.getPrice() + " each." + "\n";
-            String inlineImage = "<br></br><img src=\""+ orderDetails.getImageUrl()  + "\" width=\"100\" height=\"70\" ></img><br/>";
+            String inlineImage = "<br></br><img src=\""+ orderDetails.getImageUrl()  + "\" width=\"100\" height=\"80\" ></img><br/>";
             emailText += inlineImage;
             count+=1;
             amountPayable += Long.valueOf(orderDetails.getPrice())*Long.valueOf(orderDetails.getQuantity());
