@@ -30,11 +30,17 @@ public class ProductController {
 
     @Autowired ProductService productService;
 
+    public static final String CREATE_PRODUCT = "/create-product";
+    private static final String GET_ALL_PRODUCTS = "/get-products";
+    private static final String GET_PRODUCT_BY_ID = "/get-product-by-id";
+    private static final String GET_PRODUCT_NAME = "/get-product-name";
+    private static final String GET_PRODUCT_IMAGE = "/get-product-image";
+
     /**
      *  Add the product to the products using get request though it is not asked in the project but still this will be needed
      *  to populate the product DB.
      * */
-    @RequestMapping(value= "/create-product",method = RequestMethod.POST)
+    @RequestMapping(value= CREATE_PRODUCT,method = RequestMethod.POST)
     public ProductDto addProduct(@RequestBody ProductDto productDto){
         System.out.println("Create-Product  - "+ productDto.getProductName());
         ProductDto productDtoCopy;
@@ -46,7 +52,7 @@ public class ProductController {
     /**
      *  get-products will be returning all the product
      * */
-    @RequestMapping(value = "/get-products", method = RequestMethod.GET)
+    @RequestMapping(value = GET_ALL_PRODUCTS, method = RequestMethod.GET)
     ResponseEntity<List<ProductDto>> getProductList() throws NoSuchElementException{
         System.out.println("get-product");
         List<ProductDto> list;
@@ -58,7 +64,7 @@ public class ProductController {
     /**
      *  get the product the details with product Id
      * */
-    @RequestMapping(value = "/get-product-by-id", method = RequestMethod.GET)
+    @RequestMapping(value = GET_PRODUCT_BY_ID, method = RequestMethod.GET)
     ResponseEntity<ProductDto> getProduct(@RequestParam String productId) {
         System.out.println("inside - (get-product-by-id) ");
         ProductDto product;
@@ -70,7 +76,7 @@ public class ProductController {
      * Get product name by Id.
      * */
 
-    @RequestMapping(value = "/get-product-name",method = RequestMethod.GET)
+    @RequestMapping(value = GET_PRODUCT_NAME,method = RequestMethod.GET)
     ResponseEntity < String > getProductName(@RequestParam String productId){
         System.out.println("Inside get Product Name");
         String productName = productService.getProductNameById(productId);
@@ -81,7 +87,7 @@ public class ProductController {
      *  Get product image by product Id.
      * */
 
-    @RequestMapping(value = "/get-product-image",method = RequestMethod.GET)
+    @RequestMapping(value = GET_PRODUCT_IMAGE,method = RequestMethod.GET)
     ResponseEntity < String > getProductImage(@RequestParam String productId){
         System.out.println("Inside get Product Image");
         String productImage = productService.getProductImageById(productId);
