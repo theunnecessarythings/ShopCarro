@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.logging.Logger;
 
 /**
  * @author sreerajr
@@ -25,7 +26,7 @@ import java.util.List;
 @RestController
 public class MerchantController {
 
-
+    private final Logger LOGGER = Logger.getLogger(MerchantController.class.getName());
     @Autowired
     private IMerchantService iMerchantService;
 
@@ -39,15 +40,19 @@ public class MerchantController {
 
     @RequestMapping(value = "/get-merchant-by-id", method = RequestMethod.GET)
     ResponseEntity<MerchantDto> getMerchantById(@RequestParam String merchantId) throws IdNotFoundException {
+        LOGGER.info("Get Merchant By id : " + merchantId);
         MerchantDto merchantDto = iMerchantService.getMerchantById(merchantId);
         if(null == merchantDto) {
+            LOGGER.info("Merchant not found in the database");
             throw new IdNotFoundException("Merchant not found in the database");
         }
+        LOGGER.info("Merchant Details Returning");
         return new ResponseEntity<> (merchantDto, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/get-merchants", method = RequestMethod.POST)
     ResponseEntity<List<StockDetailsDto> > getMerchants(@RequestBody MerchantProductListDto merchantProductListDto) {
+        LOGGER.info("Getting merchant details of a product : " + merchantProductListDto);
         List<StockDetailsDto> stockDetailsDtos = iMerchantService.getMerchants(merchantProductListDto);
         return new ResponseEntity<>(stockDetailsDtos, HttpStatus.OK);
     }
@@ -55,8 +60,10 @@ public class MerchantController {
 
     @RequestMapping(value = "/get-stock", method = RequestMethod.GET)
     ResponseEntity<StockDetailsDto> getStockDetails(@RequestParam String merchantId, @RequestParam String productId) throws IdNotFoundException {
+        LOGGER.info("Get stock : merchantId -> " + merchantId + " productId -> " + productId);
         StockDetailsDto stockDetailsDto = iMerchantService.getStockById(new StockId(merchantId, productId));
         if(null == stockDetailsDto) {
+            LOGGER.info("Stock not found");
             throw new IdNotFoundException("Stock not found in the database");
         }
         return new ResponseEntity<>(stockDetailsDto, HttpStatus.OK);
@@ -71,11 +78,13 @@ public class MerchantController {
      */
     @RequestMapping(value = "/decrement-stock", method = RequestMethod.GET)
     ResponseEntity<Boolean> decrementStock(@RequestParam String merchantId, @RequestParam String productId, @RequestParam Long quantity)  {
+        LOGGER.info("Decrement Stock : merchantId -> " + merchantId + " productId -> " + productId + " quantity -> " + quantity);
         return new ResponseEntity<>(iMerchantService.decrementStock(merchantId, productId, quantity), HttpStatus.OK);
     }
 
     @RequestMapping(value = "/get-available", method = RequestMethod.GET)
     ResponseEntity<Boolean> checkAvailability(@RequestParam String merchantId, @RequestParam String productId, @RequestParam Long quantity) {
+        LOGGER.info("Check availability of Stock : merchantId -> " + merchantId + " productId -> " + productId + " quantity -> " + quantity);
         return new ResponseEntity<>(iMerchantService.getAvailability(merchantId, productId, quantity), HttpStatus.OK);
     }
 
@@ -91,8 +100,11 @@ public class MerchantController {
 
     @RequestMapping(value = "/create-merchant", method = RequestMethod.POST)
     ResponseEntity<String> createMerchant(@RequestBody MerchantDto merchantDto) throws IdAlreadyExistsException {
-        if(!iMerchantService.createMerchant(merchantDto))
+        LOGGER.info("Creating merchant row : " + merchantDto);
+        if(!iMerchantService.createMerchant(merchantDto)) {
+            LOGGER.info("Merchant Id already exists");
             throw new IdAlreadyExistsException("merchant already exists in the database");
+        }
         return new ResponseEntity<> ("merchant created", HttpStatus.CREATED);
     }
 
@@ -100,16 +112,21 @@ public class MerchantController {
 
     @RequestMapping(value = "/create-stock", method = RequestMethod.POST)
     ResponseEntity<String> createStock(@RequestBody StockDetailsDto stockDetailsDto) throws IdAlreadyExistsException {
-        if(!iMerchantService.createStock(stockDetailsDto))
+        LOGGER.info("Create Stock : " + stockDetailsDto);
+        if(!iMerchantService.createStock(stockDetailsDto)) {
             throw new IdAlreadyExistsException("stock already exists in the database");
+        }
         return new ResponseEntity<> ("stock created", HttpStatus.CREATED);
     }
 
     @RequestMapping(value = "/get-merchant-product",method = RequestMethod.GET)
     ResponseEntity<MerchantProductDetails> getMerchantProduct(@RequestParam String merchantId,@RequestParam String productId,@RequestParam String quantity) throws IdNotFoundException {
+        LOGGER.info("Getting merchant and product of Stock : merchantId -> " + merchantId + " productId -> " + productId + " quantity -> " + quantity);
         StockDetailsDto stockDetailsDto = iMerchantService.getStockById(new StockId(merchantId, productId));
-        if(null == stockDetailsDto)
+        if(null == stockDetailsDto) {
+            LOGGER.info("Stock not found");
             throw new IdNotFoundException("Stock not found in the database");
+        }
         return new ResponseEntity<>(new MerchantProductDetails(stockDetailsDto), HttpStatus.OK);
     }
 

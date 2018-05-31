@@ -17,7 +17,7 @@ import java.util.List;
 
 
 /**
- *
+ * Can use beanutils but functions exist because of the mismatch between variable names at the start
  * Utility to functions to convert to and fro between dto objects and model objects
  */
 public class UtilityFunctions {

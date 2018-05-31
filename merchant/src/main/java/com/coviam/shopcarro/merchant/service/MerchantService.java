@@ -13,11 +13,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.security.acl.LastOwnerException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
+import java.util.logging.Logger;
 
 /**
  * @author sreerajr
@@ -40,26 +41,32 @@ public class MerchantService implements IMerchantService {
     @Value("${merchant.rating.weight.items}") Double itemsWeight;
     @Value("${merchant.rating.weight.rating}") Double ratingWeight;
 
+    private final Logger LOGGER = Logger.getLogger(MerchantService.class.getName());
 
     @Override
     public MerchantDto getMerchantById(String merchantId) {
         Optional<Merchant> merchant = iMerchantRepository.findById(merchantId);
-        if(!merchant.isPresent())
+        if(!merchant.isPresent()) {
+            LOGGER.info("Id not present");
             return null;
+        }
         return UtilityFunctions.merchantToMerchantDto(merchant.get());
     }
 
     @Override
     public StockDetailsDto getStockById(StockId stockId) {
         Optional<Stock> stock = iStockRepository.findById(stockId);
-        if(!stock.isPresent())
+        if(!stock.isPresent()) {
+            LOGGER.info("Stock not present");
             return null;
+        }
         return UtilityFunctions.stockToStockDetailsDto(stock.get());
     }
 
     @Override
     public Boolean createMerchant(MerchantDto merchantDto) {
         if(null != getMerchantById(merchantDto.getMerchantId())) {
+            LOGGER.info("Merchant exists");
             return false;
         }
         iMerchantRepository.save(UtilityFunctions.merchantDtoToMerchant(merchantDto));
@@ -70,6 +77,7 @@ public class MerchantService implements IMerchantService {
     public Boolean createStock(StockDetailsDto stockDetailsDto) {
         StockDetailsDto stocks = getStockById(new StockId(stockDetailsDto.getMerchantId(), stockDetailsDto.getProductId()));
         if(null != stocks){
+            LOGGER.info("Stock exists : updating quantity...");
             stocks.setNoOfItems(stocks.getNoOfItems() + stockDetailsDto.getNoOfItems());
         }
         iStockRepository.save(UtilityFunctions.stockDetailsDtoToStock(stockDetailsDto));
@@ -80,10 +88,11 @@ public class MerchantService implements IMerchantService {
     public Boolean decrementStock(String merchantId, String productId, Long quantity) {
         StockDetailsDto stockDetailsDto = getStockById(new StockId(merchantId, productId));
         if(null == stockDetailsDto || stockDetailsDto.getNoOfItems() <= 0) {
+            LOGGER.info("Stock unavailable");
             return false;
         }
         MerchantDto merchantDto = getMerchantById(merchantId);
-
+        LOGGER.info("Stock available");
         /**
          * Add stock solds count and decrement stock in stock repository
          */
@@ -97,8 +106,10 @@ public class MerchantService implements IMerchantService {
     @Override
     public Boolean getAvailability(String merchantId, String productId, Long quantity) {
         StockDetailsDto stockDetailsDto = getStockById(new StockId(merchantId, productId));
-        if(null == stockDetailsDto)
+        if(null == stockDetailsDto) {
+            LOGGER.info("Stock unavailable");
             return false;
+        }
         return stockDetailsDto.getNoOfItems() - quantity >= 0;
     }
 
@@ -106,14 +117,14 @@ public class MerchantService implements IMerchantService {
 
     @Override
     public List<StockDetailsDto> getMerchants(MerchantProductListDto merchantProductListDto) {
-        List<Stock> stocks = calculateScore(iStockRepository.findByIdIn(merchantProductListDto.getStockIds()), merchantProductListDto.getStockIds());
+        List<Stock> stocks = updateScore(iStockRepository.findByIdIn(merchantProductListDto.getStockIds()), merchantProductListDto.getStockIds());
         //Sort the merchants by the weighted average score
         Collections.sort(stocks);
         return UtilityFunctions.stockListToDtoList(stocks);
     }
 
 
-    private List<Stock> calculateScore(List<Stock> stocks, List<StockId> stockIds) {
+    private List<Stock> updateScore(List<Stock> stocks, List<StockId> stockIds) {
 
         List<Double> ratings = new ArrayList<>();
         for(Stock stock : stocks) {
@@ -131,13 +142,9 @@ public class MerchantService implements IMerchantService {
             stock.setRating(stockRating);
             ratings.add(stockRating);
         }
-
         /**
-         *
-         * Don't do this
-         *
+         * Naive Normalization
          */
-
         Double maxRating = Collections.max(ratings);
         for(Stock stock : stocks){
             stock.setRating((stock.getRating() / maxRating) * 5);
