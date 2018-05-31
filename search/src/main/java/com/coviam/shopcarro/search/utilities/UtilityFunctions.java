@@ -9,6 +9,7 @@ import java.util.List;
 /**
  *
  * Utility functions to convert from dtos to models and vice versa
+ * Can use beanutils copyproperties (but avoiding for now)
  * @author sreerajr
  * @package com.coviam.shopcarro.search.utilities
  * @project search

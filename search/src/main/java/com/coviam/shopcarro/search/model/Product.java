@@ -19,7 +19,6 @@ public class Product {
     private String id;
 
     @Field
-    @Indexed
     private String productName;
 
     public Product(String id, String productName, String description, Long price, String attribute, List<String> merchantId, String imgUrl) {
@@ -41,14 +40,13 @@ public class Product {
     }
 
     @Field
-    @Indexed
     private String description;
 
     @Field
     private Long price;
 
     @Field
-    @Indexed
+
     private String attribute;
 
     @Field

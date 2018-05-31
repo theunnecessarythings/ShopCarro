@@ -3,13 +3,24 @@ package com.coviam.shopcarro.search.controller;
 import com.coviam.shopcarro.search.dto.ProductDto;
 import com.coviam.shopcarro.search.exceptions.NoItemsMatchingDescriptionException;
 import com.coviam.shopcarro.search.service.ISearchService;
+import org.apache.solr.client.solrj.SolrClient;
+import org.apache.solr.client.solrj.SolrQuery;
+import org.apache.solr.client.solrj.SolrServerException;
+import org.apache.solr.client.solrj.impl.HttpSolrClient;
+import org.apache.solr.client.solrj.response.QueryResponse;
+import org.apache.solr.common.SolrDocumentList;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.solr.core.mapping.SolrDocument;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 /**
  * @author sreerajr
@@ -20,10 +31,11 @@ import java.util.List;
 @RestController
 public class SearchController {
 
+    private final static Logger LOGGER = Logger.getLogger(SearchController.class.getName());
+
     @Autowired
     private ISearchService iSearchService;
 
-    //Don't do this, this doesn't make much sense now
     @RequestMapping(value = "/search-specific")
     public ResponseEntity<List<ProductDto> > search(@RequestParam(value = "q") String productName, Pageable pageable) throws NoItemsMatchingDescriptionException {
         List<ProductDto> productDtos = iSearchService.search(productName.toLowerCase(), pageable);
@@ -45,13 +57,14 @@ public class SearchController {
      */
     @RequestMapping(value = "/search")
     public ResponseEntity<List<ProductDto> > searchGeneric(@RequestParam(value = "q") String query, Pageable pageable) throws NoItemsMatchingDescriptionException {
-        System.out.println("incoming request : " + query);
+        LOGGER.info("search query : " + query);
         List<ProductDto> productDtos = iSearchService.searchGeneric(query.toLowerCase(), pageable);
         if(null == productDtos) {
             //This never happens actually ... great
+            LOGGER.warning("Empty Search Results");
             throw new NoItemsMatchingDescriptionException("Empty Search Results");
         }
-        System.out.println(productDtos);
+        LOGGER.info("Returning search results");
         return new ResponseEntity<>(productDtos, HttpStatus.OK);
     }
 
@@ -62,8 +75,31 @@ public class SearchController {
      */
     @RequestMapping(value = "/add-product-for-search", method = RequestMethod.POST)
     public ResponseEntity<Boolean> addProductToSearchRepository(@RequestBody ProductDto productDto) {
-        if(iSearchService.addProductToSearchRepository(productDto))
+        LOGGER.info("adding product to search repository " + productDto);
+        if(iSearchService.addProductToSearchRepository(productDto)) {
+            LOGGER.info("Product added");
             return new ResponseEntity<>(true, HttpStatus.CREATED);
+        }
+        LOGGER.info("Product Not Added");
         return new ResponseEntity<> (false, HttpStatus.OK);
+    }
+
+    /**
+     * http://localhost:8983/solr/shopcarro/suggest?suggest=true&suggest.dictionary=mySuggester&wt=json&suggest.q=
+     * @param query
+     * @return
+     */
+
+
+    @RequestMapping(value = "/suggest")
+    public ResponseEntity<?> autoSuggestKeyword(@RequestParam(value = "q") String query) {
+        LOGGER.info("suggest query : " + query);
+        List<String> suggestions = iSearchService.autoSuggest(query);
+        if(null == suggestions) {
+            LOGGER.info("empty suggestions");
+            return new ResponseEntity<>(false, HttpStatus.OK);
+        }
+        LOGGER.info("suggestions returned");
+        return new ResponseEntity<>(suggestions, HttpStatus.OK);
     }
 }
