@@ -14,7 +14,7 @@ import java.util.List;
  */
 
 @Repository
-public interface IStockRepository extends CrudRepository<Stock, StockId> {
+public interface StockRepository extends CrudRepository<Stock, StockId> {
     List<Stock> findByIdIn(List<StockId> ids);
     List<Stock> findByIdMerchantId(String merchantId);
     Long countByIdMerchantId(String merchantId);

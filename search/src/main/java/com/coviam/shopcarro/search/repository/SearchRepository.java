@@ -16,7 +16,7 @@ import java.util.List;
  */
 
 @Repository
-public interface ISearchRepository extends SolrCrudRepository<Product, String> {
+public interface SearchRepository extends SolrCrudRepository<Product, String> {
 
     /**
      *

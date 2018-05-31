@@ -3,22 +3,10 @@ package com.coviam.shopcarro.merchant.service;
 import com.coviam.shopcarro.merchant.dto.MerchantDto;
 import com.coviam.shopcarro.merchant.dto.MerchantProductListDto;
 import com.coviam.shopcarro.merchant.dto.StockDetailsDto;
-import com.coviam.shopcarro.merchant.model.Merchant;
-import com.coviam.shopcarro.merchant.model.Stock;
 import com.coviam.shopcarro.merchant.model.key.StockId;
-import com.coviam.shopcarro.merchant.repository.IMerchantRepository;
-import com.coviam.shopcarro.merchant.repository.IStockRepository;
-import com.coviam.shopcarro.merchant.utilities.UtilityFunctions;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
+import com.sun.org.apache.xpath.internal.operations.Bool;
 
-import java.security.acl.LastOwnerException;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
-import java.util.logging.Logger;
 
 /**
  * @author sreerajr
@@ -26,132 +14,18 @@ import java.util.logging.Logger;
  * @project merchant
  */
 
-@Service
-public class MerchantService implements IMerchantService {
+public interface MerchantService {
+    MerchantDto getMerchantById(String merchantId);
 
-    @Autowired
-    private IMerchantRepository iMerchantRepository;
+    StockDetailsDto getStockById(StockId stockId);
 
-    @Autowired
-    private IStockRepository iStockRepository;
+    Boolean createMerchant(MerchantDto merchantDto);
 
-    @Value("${merchant.rating.weight.price}") Double priceWeight;
-    @Value("${merchant.rating.weight.sold}") Double soldWeight;
-    @Value("${merchant.rating.weight.offered}") Double offeredWeight;
-    @Value("${merchant.rating.weight.items}") Double itemsWeight;
-    @Value("${merchant.rating.weight.rating}") Double ratingWeight;
+    Boolean createStock(StockDetailsDto stockDetailsDto);
 
-    private final Logger LOGGER = Logger.getLogger(MerchantService.class.getName());
+    Boolean decrementStock(String merchantId, String productId, Long quantity);
 
-    @Override
-    public MerchantDto getMerchantById(String merchantId) {
-        Optional<Merchant> merchant = iMerchantRepository.findById(merchantId);
-        if(!merchant.isPresent()) {
-            LOGGER.info("Id not present");
-            return null;
-        }
-        return UtilityFunctions.merchantToMerchantDto(merchant.get());
-    }
+    Boolean getAvailability(String merchantId, String productId, Long quantity);
 
-    @Override
-    public StockDetailsDto getStockById(StockId stockId) {
-        Optional<Stock> stock = iStockRepository.findById(stockId);
-        if(!stock.isPresent()) {
-            LOGGER.info("Stock not present");
-            return null;
-        }
-        return UtilityFunctions.stockToStockDetailsDto(stock.get());
-    }
-
-    @Override
-    public Boolean createMerchant(MerchantDto merchantDto) {
-        if(null != getMerchantById(merchantDto.getMerchantId())) {
-            LOGGER.info("Merchant exists");
-            return false;
-        }
-        iMerchantRepository.save(UtilityFunctions.merchantDtoToMerchant(merchantDto));
-        return true;
-    }
-
-    @Override
-    public Boolean createStock(StockDetailsDto stockDetailsDto) {
-        StockDetailsDto stocks = getStockById(new StockId(stockDetailsDto.getMerchantId(), stockDetailsDto.getProductId()));
-        if(null != stocks){
-            LOGGER.info("Stock exists : updating quantity...");
-            stocks.setNoOfItems(stocks.getNoOfItems() + stockDetailsDto.getNoOfItems());
-        }
-        iStockRepository.save(UtilityFunctions.stockDetailsDtoToStock(stockDetailsDto));
-        return true;
-    }
-
-    @Override
-    public Boolean decrementStock(String merchantId, String productId, Long quantity) {
-        StockDetailsDto stockDetailsDto = getStockById(new StockId(merchantId, productId));
-        if(null == stockDetailsDto || stockDetailsDto.getNoOfItems() <= 0) {
-            LOGGER.info("Stock unavailable");
-            return false;
-        }
-        MerchantDto merchantDto = getMerchantById(merchantId);
-        LOGGER.info("Stock available");
-        /**
-         * Add stock solds count and decrement stock in stock repository
-         */
-        merchantDto.setNoOfProductsSold(merchantDto.getNoOfProductsSold() + quantity);
-        stockDetailsDto.setNoOfItems(stockDetailsDto.getNoOfItems() - quantity);
-        iMerchantRepository.save(UtilityFunctions.merchantDtoToMerchant(merchantDto));
-        iStockRepository.save(UtilityFunctions.stockDetailsDtoToStock(stockDetailsDto));
-        return true;
-    }
-
-    @Override
-    public Boolean getAvailability(String merchantId, String productId, Long quantity) {
-        StockDetailsDto stockDetailsDto = getStockById(new StockId(merchantId, productId));
-        if(null == stockDetailsDto) {
-            LOGGER.info("Stock unavailable");
-            return false;
-        }
-        return stockDetailsDto.getNoOfItems() - quantity >= 0;
-    }
-
-
-
-    @Override
-    public List<StockDetailsDto> getMerchants(MerchantProductListDto merchantProductListDto) {
-        List<Stock> stocks = updateScore(iStockRepository.findByIdIn(merchantProductListDto.getStockIds()), merchantProductListDto.getStockIds());
-        //Sort the merchants by the weighted average score
-        Collections.sort(stocks);
-        return UtilityFunctions.stockListToDtoList(stocks);
-    }
-
-
-    private List<Stock> updateScore(List<Stock> stocks, List<StockId> stockIds) {
-
-        List<Double> ratings = new ArrayList<>();
-        for(Stock stock : stocks) {
-
-            Merchant merchant = iMerchantRepository.findById(stock.getId().getMerchantId()).get();
-            Double rating = merchant.getMerchantRating();
-            Long offered = iStockRepository.countByIdMerchantId(merchant.getMerchantId());
-
-            Long sold = merchant.getNoOfProductsSold();
-            Long items = stock.getNoOfItems();   //current stock
-            //Price of the product by various merchant -> should be affecting inversely
-            Long price = stock.getProductPrice();
-
-            Double stockRating = ratingWeight * rating + offered * offeredWeight + sold * soldWeight + items * itemsWeight + (1 / price) * priceWeight;
-            stock.setRating(stockRating);
-            ratings.add(stockRating);
-        }
-        /**
-         * Naive Normalization
-         */
-        Double maxRating = Collections.max(ratings);
-        for(Stock stock : stocks){
-            stock.setRating((stock.getRating() / maxRating) * 5);
-        }
-
-        return stocks;
-    }
-
-
+    List<StockDetailsDto> getMerchants(MerchantProductListDto merchantProductListDto);
 }

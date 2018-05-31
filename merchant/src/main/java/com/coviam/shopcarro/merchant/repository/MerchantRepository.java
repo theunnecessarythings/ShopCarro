@@ -15,6 +15,6 @@ import java.util.List;
  */
 
 @Repository
-public interface IMerchantRepository extends CrudRepository<Merchant, String> {
+public interface MerchantRepository extends CrudRepository<Merchant, String> {
     List<Merchant> findByMerchantIdIn(List<String> ids);
 }
