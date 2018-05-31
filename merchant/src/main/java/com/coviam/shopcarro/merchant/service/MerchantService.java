@@ -68,8 +68,9 @@ public class MerchantService implements IMerchantService {
 
     @Override
     public Boolean createStock(StockDetailsDto stockDetailsDto) {
-        if(null != getStockById(new StockId(stockDetailsDto.getMerchantId(), stockDetailsDto.getProductId()))) {
-            return false;
+        StockDetailsDto stocks = getStockById(new StockId(stockDetailsDto.getMerchantId(), stockDetailsDto.getProductId()));
+        if(null != stocks){
+            stocks.setNoOfItems(stocks.getNoOfItems() + stockDetailsDto.getNoOfItems());
         }
         iStockRepository.save(UtilityFunctions.stockDetailsDtoToStock(stockDetailsDto));
         return true;
@@ -115,12 +116,8 @@ public class MerchantService implements IMerchantService {
     private List<Stock> calculateScore(List<Stock> stocks, List<StockId> stockIds) {
 
         List<Double> ratings = new ArrayList<>();
-//        List<String> merchantIds = stockIds.stream().map((stockId) -> stockId.getMerchantId()).collect(Collectors.toList());
-//        List<Merchant> merchants = iMerchantRepository.findByMerchantIdIn(merchantIds);
-
         for(Stock stock : stocks) {
 
-            //Use the findByMerchantIdIn(List<String> ids) later
             Merchant merchant = iMerchantRepository.findById(stock.getId().getMerchantId()).get();
             Double rating = merchant.getMerchantRating();
             Long offered = iStockRepository.countByIdMerchantId(merchant.getMerchantId());
@@ -136,7 +133,6 @@ public class MerchantService implements IMerchantService {
         }
 
         /**
-         *
          *
          * Don't do this
          *

@@ -26,7 +26,7 @@ public interface ISearchRepository extends SolrCrudRepository<Product, String> {
      * Sort by any field which is present in the search results in ascending or descending order
      * The search query is case insensitive
      * request format   /search?q=query?size=20&page=0&sort=price,desc
-     *
+     * Autosuggest
      *
      * @param productName
      * @param pageable
@@ -36,5 +36,6 @@ public interface ISearchRepository extends SolrCrudRepository<Product, String> {
 
     public Page<Product> findByProductName(String productName, Pageable pageable);
     public Page<Product> findByProductNameContainsOrDescriptionContainsOrAttributeContains(List<String> productName, List<String> description, List<String> attribute, Pageable pageable);
+
 
 }

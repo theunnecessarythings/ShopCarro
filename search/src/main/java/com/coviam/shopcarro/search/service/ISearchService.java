@@ -16,4 +16,7 @@ public interface ISearchService {
     Boolean addProductToSearchRepository(ProductDto productDto);
 
     List<ProductDto> searchGeneric(String query, Pageable pageable);
+
+    List<String> autoSuggest(String query);
+
 }
