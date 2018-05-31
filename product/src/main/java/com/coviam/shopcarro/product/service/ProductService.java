@@ -1,5 +1,6 @@
 package com.coviam.shopcarro.product.service;
 
+import com.coviam.shopcarro.product.controller.ProductController;
 import com.coviam.shopcarro.product.dto.ProductDto;
 import com.coviam.shopcarro.product.model.Product;
 import com.coviam.shopcarro.product.repository.IProductRepository;
@@ -8,6 +9,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.stereotype.Service;
@@ -19,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.logging.Logger;
 
 
 @Service
@@ -26,6 +29,12 @@ public class ProductService implements IProductService {
 
     @Autowired
     private IProductRepository iProductRepository;
+
+    private static final Logger LOGGER = Logger.getLogger( ProductService.class.getName() );
+
+    @Value("${urlAddSearch}") private String urlOfAddSearch;
+    @Value("${urlAddMerchants}") private String urlOfAddMerchants;
+    @Value("${urlAddStock}") private String urlOfAddStock;
 
     /**
      *  Create: For adding products in the mongoDB database.
@@ -43,6 +52,8 @@ public class ProductService implements IProductService {
         return resp;
     }
 
+
+
     @Override
     public ProductDto create(ProductDto productDto) {
         Product product = new Product();
@@ -52,12 +63,9 @@ public class ProductService implements IProductService {
         /**
          * adding products in to the search DB for Data Consistency.
          * */
-        String urlOfAddSearch = "http://10.177.1.239:8084/add-product-for-search/";
+        LOGGER.info( "Adding product to search:" + productDto);
         RestTemplate restTemplate = new RestTemplate();
-        //restTemplate.getMessageConverters().add(new StringHttpMessageConverter());
-
         JSONObject map = new JSONObject();
-
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
@@ -74,19 +82,17 @@ public class ProductService implements IProductService {
             map.put("imgUrl", product.getImgUrl());
 
         } catch (JSONException e) {
-            e.printStackTrace();
+            LOGGER.info(e.toString());
         }
-        System.out.println(map);
+
         HttpEntity<String> entity = new HttpEntity<String>(map.toString(), headers);
         ResponseEntity<Boolean> response = restTemplate.exchange(urlOfAddSearch, HttpMethod.POST, entity, Boolean.class);
 
-        System.out.println("Product added to the search DB - " + response);
+        LOGGER.info("Product added to the search DB " + response);
 
         /**
          * adding products to merchants DB
          * */
-        String urlOfAddMerchants = "http://10.177.1.239:8083/create-merchant/";
-//        MultiValueMap<String, Object> map1= new LinkedMultiValueMap<String, Object>();
 
         for(int i=0;i<product.getMerchantId().size();i++){
             JSONObject map1 = new JSONObject();
@@ -97,19 +103,18 @@ public class ProductService implements IProductService {
                 map1.put("merchantRating", "4");
 
             } catch (JSONException e) {
-                e.printStackTrace();
+                LOGGER.info(e.toString());
             }
             HttpEntity<String> entity1 = new HttpEntity<String>(map1.toString(), headers);
             ResponseEntity<String> response1 = restTemplate.exchange(urlOfAddMerchants, HttpMethod.POST, entity1, String.class);
-            System.out.println(response1);
-
+            LOGGER.info("Added to the merchant DB: " + response);
         }
 
         /**
          * Adding products with merchant Db having details about the stock
          * */
 
-        String urlForAddingToStock = "http://10.177.1.239:8083/create-stock/";
+        //String urlForAddingToStock = "";
         //MultiValueMap<String, Object> map2= new LinkedMultiValueMap<String, Object>();
         for(int i=0;i<product.getMerchantId().size();i++){
             JSONObject map2 = new JSONObject();
@@ -121,13 +126,15 @@ public class ProductService implements IProductService {
                 map2.put("noOfItems", "100");
                 map2.put("merchantName", "Shriya");
             } catch (JSONException e) {
-                e.printStackTrace();
+                LOGGER.info(e.toString());
+                //e.printStackTrace();
             }
             HttpEntity<String> entity2 = new HttpEntity<String>(map2.toString(), headers);
-            ResponseEntity<String> response2 = restTemplate.exchange(urlForAddingToStock, HttpMethod.POST, entity2, String.class);
-            System.out.println(response2);
+            ResponseEntity<String> response2 = restTemplate.exchange(urlOfAddStock, HttpMethod.POST, entity2, String.class);
+            LOGGER.info("Added to the Stock DB: " + response2);
         }
 
+        LOGGER.info("Adding to the product DB");
         iProductRepository.save(product);
         return productDto;
     }
@@ -141,7 +148,6 @@ public class ProductService implements IProductService {
     public List<ProductDto> getAllProducts(){
         List<Product> list = new ArrayList<>();
         list = iProductRepository.findAll();
-        //System.out.println("Services model " + list.size());
         List<ProductDto> listDto = new ArrayList<>();
 
         for(Product products:list){
@@ -167,11 +173,8 @@ public class ProductService implements IProductService {
         if(!iProductRepository.existsById(id)){
             throw new NoSuchElementException("This is not a valid Id");
         }
-
         product = iProductRepository.findById(id);
-
         ProductDto productDto = new ProductDto();
-
         /**
          *  This is for converting the optional response to ProductDto
          * */
