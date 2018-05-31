@@ -3,10 +3,13 @@ package com.coviam.shopcarro.addToCart.controller;
 import com.coviam.shopcarro.addToCart.CustomException;
 import com.coviam.shopcarro.addToCart.dto.CartDetailsDto;
 import com.coviam.shopcarro.addToCart.services.IAddToCartService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.logging.Logger;
 
 /**
  *
@@ -17,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 
 public class AddToCartController {
+    //logger.addHandler(new ConsoleHandler());
     @Autowired
     private IAddToCartService iAddToCartService;
 
@@ -29,14 +33,12 @@ public class AddToCartController {
 
     @RequestMapping(value = "/add-cart", method = RequestMethod.GET)
     ResponseEntity<Boolean> addCart(@RequestParam String email, @RequestParam String merchantId, @RequestParam String id, @RequestParam String quantity) throws CustomException {
-        System.out.println(email + merchantId + id+quantity);
+       // System.out.println(email + merchantId + id+quantity);
+
         if (email == null || merchantId == null || id == null) {
             //System.out.println("hey");
             throw new CustomException("false");
         } else {
-
-            // System.out.println("hey");
-
             Boolean create = iAddToCartService.addToCart(email, merchantId, id, quantity);
             System.out.println(create);
             return new ResponseEntity<>(create, HttpStatus.CREATED);
@@ -56,14 +58,14 @@ public class AddToCartController {
 
     @RequestMapping(value = "/get-cart", method = RequestMethod.GET)
     ResponseEntity<CartDetailsDto> get(@RequestParam String email) throws CustomException {
+
         System.out.println(email);
         if (email.length() == 0) {
-            System.out.println("null");
             throw new CustomException("false");
         } else{
 
             CartDetailsDto cartDetailsDto = iAddToCartService.getCart(email);
-//            System.out.println(cartDetailsDto.toString());
+//
         return new ResponseEntity<>(cartDetailsDto, HttpStatus.CREATED);
     }
 
@@ -96,7 +98,7 @@ public class AddToCartController {
         }
         iAddToCartService.delItem(email,merchantId,id,quantity);
 
-        System.out.println("deleted");
+
         return new ResponseEntity<>(true, HttpStatus.CREATED);
     }
 
