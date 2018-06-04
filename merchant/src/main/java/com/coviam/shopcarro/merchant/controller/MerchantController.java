@@ -22,6 +22,7 @@ import java.util.logging.Logger;
  * @project merchant
  */
 
+@CrossOrigin
 @RestController
 public class MerchantController {
 
@@ -104,7 +105,7 @@ public class MerchantController {
             LOGGER.info("Merchant Id already exists");
             throw new IdAlreadyExistsException("merchant already exists in the database");
         }
-        return new ResponseEntity<> ("merchant created", HttpStatus.CREATED);
+        return new ResponseEntity<String>("{\"result\":\"success\"}", HttpStatus.CREATED);
     }
 
 

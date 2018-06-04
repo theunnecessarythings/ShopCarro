@@ -134,7 +134,17 @@ public class MerchantServiceImpl implements MerchantService {
 
             Long sold = merchant.getNoOfProductsSold();
             Long items = stock.getNoOfItems();   //current stock
-            //Price of the product by various merchant -> should be affecting inversely
+            //Price of the product by varprivate Date entryDate;
+            //   private Double netRevenue;
+            //   private Double monthlyRecurringRevenue;
+            //   private Double incomePaymentType;
+            //   private Double incomeProductType;
+            //   private int activeSubscriptions;
+            //   private int newMonthlySubsciptions;
+            //   private int upcomingPayments;
+            //   private int deferredPayments;
+            //   private Double churnRate;
+            //   private Double refundsProcessed;ious merchant -> should be affecting inversely
             Long price = stock.getProductPrice();
 
             Double stockRating = ratingWeight * rating + offered * offeredWeight + sold * soldWeight + items * itemsWeight + (1 / price) * priceWeight;

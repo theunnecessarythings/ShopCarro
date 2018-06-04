@@ -1,0 +1,71 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:weightSum="2"
+    android:padding="10dp">
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:orientation="vertical"
+        android:layout_weight="1"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/tv_merchant_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:text="Merchant Name"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textColor="@android:color/black" />
+
+
+        <TextView
+            android:id="@+id/tv_merchant_rating"
+            android:layout_width="wrap_content"
+            android:paddingBottom="4dp"
+            android:paddingTop="4dp"
+            android:background="@drawable/background_green"
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tv_merchant_name"
+            android:layout_marginTop="5dp"
+            android:text="3.4 "
+            android:textColor="@android:color/white" />
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_weight="1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tv_in_stock"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="In Stock : 124"
+            android:layout_marginBottom="12dp"
+            android:textSize="12sp"
+            android:textColor="@android:color/holo_green_dark"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tv_price"
+            android:layout_marginBottom="8dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Rs 23000"
+
+            android:textSize="20sp"
+            android:textAppearance="?android:attr/textAppearanceButton"
+            android:textColor="@android:color/holo_red_dark"
+            android:textStyle="bold" />
+
+    </LinearLayout>
+
+</LinearLayout>

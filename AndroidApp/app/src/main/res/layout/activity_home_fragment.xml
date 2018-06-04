@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/layout_home"
+    android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:layout_height="match_parent"
+    android:background="#eee"
+    android:layout_gravity="center"
+    tools:context=".view.activity.MainActivity">
+
+    <ProgressBar
+        android:layout_width="match_parent"
+        android:id="@+id/pb_product_loading"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        />
+    <LinearLayout
+        android:id="@+id/error_page_home"
+        android:background="@color/white"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:layout_gravity="center"
+            android:src="@drawable/error"
+            />
+        <TextView
+            android:layout_width="match_parent"
+            android:textStyle="bold"
+            android:textSize="24sp"
+            android:gravity="center_horizontal"
+            android:textColor="@color/colorPrimary"
+            android:text="Something's not right!"
+            android:layout_height="wrap_content" />
+        <TextView
+            android:layout_width="match_parent"
+            android:textStyle="bold"
+            android:textSize="16sp"
+            android:gravity="center_horizontal"
+            android:text="Check your connectivity"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rv_products"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="8dp"
+        android:layout_marginTop="8dp"
+        android:foregroundGravity="center" />
+</LinearLayout>
