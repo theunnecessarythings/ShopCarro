@@ -2,23 +2,13 @@ package com.coviam.shopcarro.search.controller;
 
 import com.coviam.shopcarro.search.dto.ProductDto;
 import com.coviam.shopcarro.search.exceptions.NoItemsMatchingDescriptionException;
-import com.coviam.shopcarro.search.service.ISearchService;
-import org.apache.solr.client.solrj.SolrClient;
-import org.apache.solr.client.solrj.SolrQuery;
-import org.apache.solr.client.solrj.SolrServerException;
-import org.apache.solr.client.solrj.impl.HttpSolrClient;
-import org.apache.solr.client.solrj.response.QueryResponse;
-import org.apache.solr.common.SolrDocumentList;
+import com.coviam.shopcarro.search.service.SearchService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.solr.core.mapping.SolrDocument;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -34,11 +24,11 @@ public class SearchController {
     private final static Logger LOGGER = Logger.getLogger(SearchController.class.getName());
 
     @Autowired
-    private ISearchService iSearchService;
+    private SearchService searchService;
 
     @RequestMapping(value = "/search-specific")
     public ResponseEntity<List<ProductDto> > search(@RequestParam(value = "q") String productName, Pageable pageable) throws NoItemsMatchingDescriptionException {
-        List<ProductDto> productDtos = iSearchService.search(productName.toLowerCase(), pageable);
+        List<ProductDto> productDtos = searchService.search(productName.toLowerCase(), pageable);
         if(null == productDtos) {
             //This never happens actually ... great
             throw new NoItemsMatchingDescriptionException("Empty Search Results");
@@ -58,7 +48,7 @@ public class SearchController {
     @RequestMapping(value = "/search")
     public ResponseEntity<List<ProductDto> > searchGeneric(@RequestParam(value = "q") String query, Pageable pageable) throws NoItemsMatchingDescriptionException {
         LOGGER.info("search query : " + query);
-        List<ProductDto> productDtos = iSearchService.searchGeneric(query.toLowerCase(), pageable);
+        List<ProductDto> productDtos = searchService.searchGeneric(query.toLowerCase(), pageable);
         if(null == productDtos) {
             //This never happens actually ... great
             LOGGER.warning("Empty Search Results");
@@ -76,7 +66,7 @@ public class SearchController {
     @RequestMapping(value = "/add-product-for-search", method = RequestMethod.POST)
     public ResponseEntity<Boolean> addProductToSearchRepository(@RequestBody ProductDto productDto) {
         LOGGER.info("adding product to search repository " + productDto);
-        if(iSearchService.addProductToSearchRepository(productDto)) {
+        if(searchService.addProductToSearchRepository(productDto)) {
             LOGGER.info("Product added");
             return new ResponseEntity<>(true, HttpStatus.CREATED);
         }
@@ -94,7 +84,7 @@ public class SearchController {
     @RequestMapping(value = "/suggest")
     public ResponseEntity<?> autoSuggestKeyword(@RequestParam(value = "q") String query) {
         LOGGER.info("suggest query : " + query);
-        List<String> suggestions = iSearchService.autoSuggest(query);
+        List<String> suggestions = searchService.autoSuggest(query);
         if(null == suggestions) {
             LOGGER.info("empty suggestions");
             return new ResponseEntity<>(false, HttpStatus.OK);
